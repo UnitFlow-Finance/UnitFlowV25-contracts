@@ -228,6 +228,7 @@ contract ArcFlowV25Router02 is IArcFlowV25Router02 {
         address to,
         uint deadline
     ) external virtual override ensure(deadline) returns (uint[] memory amounts) {
+        require(path.length >= 2, 'ArcFlowV25Router: INVALID_PATH_LENGTH');
         amounts = ArcFlowV25Library.getAmountsOut(factory, amountIn, path);
         require(amounts[amounts.length - 1] >= amountOutMin, 'ArcFlowV25Router: INSUFFICIENT_OUTPUT_AMOUNT');
         TransferHelper.safeTransferFrom(
@@ -242,6 +243,7 @@ contract ArcFlowV25Router02 is IArcFlowV25Router02 {
         address to,
         uint deadline
     ) external virtual override ensure(deadline) returns (uint[] memory amounts) {
+        require(path.length >= 2, 'ArcFlowV25Router: INVALID_PATH_LENGTH');
         amounts = ArcFlowV25Library.getAmountsIn(factory, amountOut, path);
         require(amounts[0] <= amountInMax, 'ArcFlowV25Router: EXCESSIVE_INPUT_AMOUNT');
         TransferHelper.safeTransferFrom(
@@ -257,6 +259,7 @@ contract ArcFlowV25Router02 is IArcFlowV25Router02 {
         ensure(deadline)
         returns (uint[] memory amounts)
     {
+        require(path.length >= 2, 'ArcFlowV25Router: INVALID_PATH_LENGTH');
         require(path[0] == WUSDC, 'ArcFlowV25Router: INVALID_PATH');
         amounts = ArcFlowV25Library.getAmountsOut(factory, msg.value, path);
         require(amounts[amounts.length - 1] >= amountOutMin, 'ArcFlowV25Router: INSUFFICIENT_OUTPUT_AMOUNT');
@@ -271,6 +274,7 @@ contract ArcFlowV25Router02 is IArcFlowV25Router02 {
         ensure(deadline)
         returns (uint[] memory amounts)
     {
+        require(path.length >= 2, 'ArcFlowV25Router: INVALID_PATH_LENGTH');
         require(path[path.length - 1] == WUSDC, 'ArcFlowV25Router: INVALID_PATH');
         amounts = ArcFlowV25Library.getAmountsIn(factory, amountOut, path);
         require(amounts[0] <= amountInMax, 'ArcFlowV25Router: EXCESSIVE_INPUT_AMOUNT');
@@ -288,6 +292,7 @@ contract ArcFlowV25Router02 is IArcFlowV25Router02 {
         ensure(deadline)
         returns (uint[] memory amounts)
     {
+        require(path.length >= 2, 'ArcFlowV25Router: INVALID_PATH_LENGTH');
         require(path[path.length - 1] == WUSDC, 'ArcFlowV25Router: INVALID_PATH');
         amounts = ArcFlowV25Library.getAmountsOut(factory, amountIn, path);
         require(amounts[amounts.length - 1] >= amountOutMin, 'ArcFlowV25Router: INSUFFICIENT_OUTPUT_AMOUNT');
