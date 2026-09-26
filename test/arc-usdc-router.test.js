@@ -14,11 +14,11 @@ describe("Arc ERC-20 USDC routers", function () {
     const usdc = await USDC.deploy(USDC_SUPPLY);
     const TaxToken = await ethers.getContractFactory("TaxToken");
     const taxToken = await TaxToken.deploy(TAX_SUPPLY, 1000, collector.address);
-    const Factory = await ethers.getContractFactory("ArcFlowV25Factory");
+    const Factory = await ethers.getContractFactory("UnitFlowV25Factory");
     const factory = await Factory.deploy(owner.address);
-    const LiquidityRouter = await ethers.getContractFactory("ArcFlowV25LiquidityRouter");
+    const LiquidityRouter = await ethers.getContractFactory("UnitFlowV25LiquidityRouter");
     const liquidityRouter = await LiquidityRouter.deploy(await factory.getAddress(), await usdc.getAddress());
-    const SwapRouter = await ethers.getContractFactory("ArcFlowV25SwapRouter");
+    const SwapRouter = await ethers.getContractFactory("UnitFlowV25SwapRouter");
     const swapRouter = await SwapRouter.deploy(await factory.getAddress(), await usdc.getAddress());
 
     await taxToken.setTaxExempt(await liquidityRouter.getAddress(), true);
@@ -30,7 +30,7 @@ describe("Arc ERC-20 USDC routers", function () {
     );
 
     const pairAddress = await factory.getPair(await taxToken.getAddress(), await usdc.getAddress());
-    const pair = await ethers.getContractAt("ArcFlowV25Pair", pairAddress);
+    const pair = await ethers.getContractAt("UnitFlowV25Pair", pairAddress);
     return { owner, trader, collector, usdc, taxToken, factory, liquidityRouter, swapRouter, pair };
   }
 
@@ -94,7 +94,7 @@ describe("Arc ERC-20 USDC routers", function () {
     const quoted = await swapRouter.getAmountsOut(amountIn, [await usdc.getAddress(), await taxToken.getAddress()]);
     await expect(swapRouter.connect(trader).swapExactUSDCForTokensSupportingFeeOnTransferTokens(
       amountIn, quoted[1], [await usdc.getAddress(), await taxToken.getAddress()], trader.address, MAX
-    )).to.be.revertedWith("ArcFlowV25SwapRouter: INSUFFICIENT_OUTPUT_AMOUNT");
+    )).to.be.revertedWith("UnitFlowV25SwapRouter: INSUFFICIENT_OUTPUT_AMOUNT");
     const postTaxOutput = quoted[1] - quoted[1] / 10n;
     await swapRouter.connect(trader).swapExactUSDCForTokensSupportingFeeOnTransferTokens(
       amountIn, postTaxOutput, [await usdc.getAddress(), await taxToken.getAddress()], trader.address, MAX
@@ -118,9 +118,9 @@ describe("Arc ERC-20 USDC routers", function () {
 
   it("rejects zero-address router dependencies", async function () {
     const [owner] = await ethers.getSigners();
-    const Router = await ethers.getContractFactory("ArcFlowV25SwapRouter");
+    const Router = await ethers.getContractFactory("UnitFlowV25SwapRouter");
     await expect(Router.deploy(ethers.ZeroAddress, owner.address)).to.be.revertedWith(
-      "ArcFlowV25SwapRouter: ZERO_ADDRESS"
+      "UnitFlowV25SwapRouter: ZERO_ADDRESS"
     );
   });
 });

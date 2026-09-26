@@ -1,16 +1,16 @@
 pragma solidity >=0.5.0;
 
-import '../../../core/contracts/interfaces/IArcFlowV25Pair.sol';
-import '../../../core/contracts/interfaces/IArcFlowV25Factory.sol';
+import '../../../core/contracts/interfaces/IUnitFlowV25Pair.sol';
+import '../../../core/contracts/interfaces/IUnitFlowV25Factory.sol';
 import '@uniswap/lib/contracts/libraries/Babylonian.sol';
 import '@uniswap/lib/contracts/libraries/FullMath.sol';
 
 import './SafeMath.sol';
-import './ArcFlowV25Library.sol';
+import './UnitFlowV25Library.sol';
 
 // library containing some math for dealing with the liquidity shares of a pair, e.g. computing their exact value
 // in terms of the underlying tokens
-library ArcFlowV25LiquidityMathLibrary {
+library UnitFlowV25LiquidityMathLibrary {
     using SafeMath for uint256;
 
     // computes the direction and magnitude of the profit-maximizing trade
@@ -48,9 +48,9 @@ library ArcFlowV25LiquidityMathLibrary {
         uint256 truePriceTokenB
     ) view internal returns (uint256 reserveA, uint256 reserveB) {
         // first get reserves before the swap
-        (reserveA, reserveB) = ArcFlowV25Library.getReserves(factory, tokenA, tokenB);
+        (reserveA, reserveB) = UnitFlowV25Library.getReserves(factory, tokenA, tokenB);
 
-        require(reserveA > 0 && reserveB > 0, 'ArcFlowV25ArbitrageLibrary: ZERO_PAIR_RESERVES');
+        require(reserveA > 0 && reserveB > 0, 'UnitFlowV25ArbitrageLibrary: ZERO_PAIR_RESERVES');
 
         // then compute how much to swap to arb to the true price
         (bool aToB, uint256 amountIn) = computeProfitMaximizingTrade(truePriceTokenA, truePriceTokenB, reserveA, reserveB);
@@ -61,11 +61,11 @@ library ArcFlowV25LiquidityMathLibrary {
 
         // now affect the trade to the reserves
         if (aToB) {
-            uint amountOut = ArcFlowV25Library.getAmountOut(amountIn, reserveA, reserveB);
+            uint amountOut = UnitFlowV25Library.getAmountOut(amountIn, reserveA, reserveB);
             reserveA += amountIn;
             reserveB -= amountOut;
         } else {
-            uint amountOut = ArcFlowV25Library.getAmountOut(amountIn, reserveB, reserveA);
+            uint amountOut = UnitFlowV25Library.getAmountOut(amountIn, reserveB, reserveA);
             reserveB += amountIn;
             reserveA -= amountOut;
         }
@@ -103,9 +103,9 @@ library ArcFlowV25LiquidityMathLibrary {
         address tokenB,
         uint256 liquidityAmount
     ) internal view returns (uint256 tokenAAmount, uint256 tokenBAmount) {
-        (uint256 reservesA, uint256 reservesB) = ArcFlowV25Library.getReserves(factory, tokenA, tokenB);
-        IArcFlowV25Pair pair = IArcFlowV25Pair(ArcFlowV25Library.pairFor(factory, tokenA, tokenB));
-        bool feeOn = IArcFlowV25Factory(factory).feeTo() != address(0);
+        (uint256 reservesA, uint256 reservesB) = UnitFlowV25Library.getReserves(factory, tokenA, tokenB);
+        IUnitFlowV25Pair pair = IUnitFlowV25Pair(UnitFlowV25Library.pairFor(factory, tokenA, tokenB));
+        bool feeOn = IUnitFlowV25Factory(factory).feeTo() != address(0);
         uint kLast = feeOn ? pair.kLast() : 0;
         uint totalSupply = pair.totalSupply();
         return computeLiquidityValue(reservesA, reservesB, totalSupply, liquidityAmount, feeOn, kLast);
@@ -124,8 +124,8 @@ library ArcFlowV25LiquidityMathLibrary {
         uint256 tokenAAmount,
         uint256 tokenBAmount
     ) {
-        bool feeOn = IArcFlowV25Factory(factory).feeTo() != address(0);
-        IArcFlowV25Pair pair = IArcFlowV25Pair(ArcFlowV25Library.pairFor(factory, tokenA, tokenB));
+        bool feeOn = IUnitFlowV25Factory(factory).feeTo() != address(0);
+        IUnitFlowV25Pair pair = IUnitFlowV25Pair(UnitFlowV25Library.pairFor(factory, tokenA, tokenB));
         uint kLast = feeOn ? pair.kLast() : 0;
         uint totalSupply = pair.totalSupply();
 

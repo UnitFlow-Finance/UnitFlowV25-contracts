@@ -3,7 +3,7 @@ const hre = require("hardhat");
 async function main() {
   const ethers = hre.ethers;
 
-  console.log("🚀 Deploying ArcFlowV25SwapRouter...");
+  console.log("🚀 Deploying UnitFlowV25SwapRouter...");
   console.log("Network:", (await ethers.provider.getNetwork()).name);
   console.log("Chain ID:", (await ethers.provider.getNetwork()).chainId);
 
@@ -20,13 +20,13 @@ async function main() {
   console.log("Using Arc USDC:", USDC_ADDRESS);
 
   console.log("\n⏳ Deploying router...");
-  const Router = await ethers.getContractFactory("ArcFlowV25SwapRouter");
+  const Router = await ethers.getContractFactory("UnitFlowV25SwapRouter");
   const router = await Router.deploy(FACTORY_ADDRESS, USDC_ADDRESS);
 
   await router.waitForDeployment();
   const routerAddress = await router.getAddress();
 
-  console.log("\n✅ ArcFlowV25SwapRouter deployed successfully!");
+  console.log("\n✅ UnitFlowV25SwapRouter deployed successfully!");
   console.log("Router address:", routerAddress);
   console.log("Transaction:", router.deploymentTransaction()?.hash);
 

@@ -1,9 +1,9 @@
 pragma solidity =0.5.16;
 
-import './interfaces/IArcFlowV25ERC20.sol';
+import './interfaces/IUnitFlowV25ERC20.sol';
 import './libraries/SafeMath.sol';
 
-contract USDC is IArcFlowV25ERC20 {
+contract USDC is IUnitFlowV25ERC20 {
     using SafeMath for uint;
 
     string public constant name = 'USDC';
@@ -80,7 +80,7 @@ contract USDC is IArcFlowV25ERC20 {
     }
 
     function permit(address owner, address spender, uint value, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
-        require(deadline >= block.timestamp, 'ArcFlowV25: EXPIRED');
+        require(deadline >= block.timestamp, 'UnitFlowV25: EXPIRED');
         bytes32 digest = keccak256(
             abi.encodePacked(
                 '\x19\x01',
@@ -89,7 +89,7 @@ contract USDC is IArcFlowV25ERC20 {
             )
         );
         address recoveredAddress = ecrecover(digest, v, r, s);
-        require(recoveredAddress != address(0) && recoveredAddress == owner, 'ArcFlowV25: INVALID_SIGNATURE');
+        require(recoveredAddress != address(0) && recoveredAddress == owner, 'UnitFlowV25: INVALID_SIGNATURE');
         _approve(owner, spender, value);
     }
 }

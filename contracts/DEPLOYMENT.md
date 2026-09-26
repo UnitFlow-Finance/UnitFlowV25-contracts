@@ -1,4 +1,4 @@
-# ArcFlow V2.5 on Arc
+# UnitFlow V2.5 on Arc
 
 Arc exposes its native gas asset through the standard 6-decimal ERC-20 USDC system contract at
 `0x3600000000000000000000000000000000000000`. The routers use ERC-20 approvals and transfers;
@@ -25,13 +25,16 @@ The script verifies chain ID `5042002`, deploys the factory and both routers, cr
 token, whitelists the liquidity router, adds USDC liquidity, executes taxed swaps in both directions,
 and removes liquidity while asserting that the whitelisted liquidity operations are not taxed.
 
-Tax tokens must exempt `ArcFlowV25LiquidityRouter` according to their own exemption mechanism.
+Tax tokens must exempt `UnitFlowV25LiquidityRouter` according to their own exemption mechanism.
 The swap router deliberately remains non-exempt so fee-on-transfer swap paths can measure actual
 pair inputs and recipient outputs.
 
 ## Verified Arc testnet deployment
 
 Deployed and integration-tested on 2026-09-26:
+
+These addresses are retained as historical test evidence for the superseded pre-branding bytecode.
+The renamed UnitFlow contracts require a fresh deployment before production use.
 
 - Factory: `0x58005506FeC589EDd462f7936fddE3bd31c5652b`
 - Liquidity router: `0x0Fa2FCEa6CFE583eF759869625F918AA06280d16`

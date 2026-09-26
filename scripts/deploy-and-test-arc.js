@@ -28,9 +28,9 @@ async function main() {
     throw new Error("At least 5 testnet USDC is required for deployment, liquidity, swaps, and gas");
   }
 
-  const factory = await deploy("ArcFlowV25Factory", deployer.address);
-  const liquidityRouter = await deploy("ArcFlowV25LiquidityRouter", await factory.getAddress(), ARC_USDC);
-  const swapRouter = await deploy("ArcFlowV25SwapRouter", await factory.getAddress(), ARC_USDC);
+  const factory = await deploy("UnitFlowV25Factory", deployer.address);
+  const liquidityRouter = await deploy("UnitFlowV25LiquidityRouter", await factory.getAddress(), ARC_USDC);
+  const swapRouter = await deploy("UnitFlowV25SwapRouter", await factory.getAddress(), ARC_USDC);
   const taxToken = await deploy("TaxToken", ethers.parseEther("1000000"), 1000, TAX_COLLECTOR);
 
   const liquidityRouterAddress = await liquidityRouter.getAddress();
@@ -47,7 +47,7 @@ async function main() {
   )).wait();
 
   const pairAddress = await factory.getPair(taxTokenAddress, ARC_USDC);
-  const pair = await ethers.getContractAt("ArcFlowV25Pair", pairAddress, deployer);
+  const pair = await ethers.getContractAt("UnitFlowV25Pair", pairAddress, deployer);
   if (await taxToken.balanceOf(TAX_COLLECTOR) !== 0n) {
     throw new Error("Whitelisted liquidity addition was taxed");
   }

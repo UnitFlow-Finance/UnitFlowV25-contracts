@@ -3,7 +3,7 @@ const hre = require("hardhat");
 async function main() {
   const ethers = hre.ethers;
 
-  console.log("🚀 Deploying ArcFlowV25Factory...");
+  console.log("🚀 Deploying UnitFlowV25Factory...");
   console.log("Network:", (await ethers.provider.getNetwork()).name);
   console.log("Chain ID:", (await ethers.provider.getNetwork()).chainId);
 
@@ -17,15 +17,15 @@ async function main() {
   const feeToSetter = deployer.address;
   console.log("\n📌 feeToSetter:", feeToSetter);
 
-  console.log("\n⏳ Deploying ArcFlowV25Factory contract...");
-  const Factory = await ethers.getContractFactory("ArcFlowV25Factory");
+  console.log("\n⏳ Deploying UnitFlowV25Factory contract...");
+  const Factory = await ethers.getContractFactory("UnitFlowV25Factory");
 
   const factory = await Factory.deploy(feeToSetter);
   await factory.waitForDeployment();
 
   const contractAddress = await factory.getAddress();
 
-  console.log("\n✅ ArcFlowV25Factory deployed successfully!");
+  console.log("\n✅ UnitFlowV25Factory deployed successfully!");
   console.log("Contract address:", contractAddress);
   console.log("Transaction hash:", factory.deploymentTransaction()?.hash);
 
