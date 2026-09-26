@@ -2,7 +2,8 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "test:arc": "hardhat test test/arc-usdc-router.test.js"
+    "test:arc": "hardhat test test/arc-usdc-router.test.js",
+    "deploy:arc": "hardhat run scripts/deploy-unitflow.js --network arcTestnet"
   },
   "dependencies": {
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",

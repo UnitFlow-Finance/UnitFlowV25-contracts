@@ -21,6 +21,22 @@ export PRIVATE_KEY=0x...
 npx hardhat run scripts/deploy-and-test-arc.js --network arcTestnet
 ```
 
+To deploy only the factory, liquidity router, and swap router in one command:
+
+```bash
+npm run deploy:arc
+```
+
+This deploys the factory first, passes its address and Arc USDC to both routers, verifies their
+bindings on-chain, and prints the three addresses, transaction hashes, explorer links, and frontend
+environment values together.
+
+Latest verified `npm run deploy:arc` smoke deployment (2026-09-26):
+
+- Factory: `0xE5E8528dA254885451a5F0c26d506937A8F03151`
+- Liquidity router: `0xe389A8dec979910409F1c3E449F62E76589863e4`
+- Swap router: `0xA298944D29E292aDdF22F2Dd8CE6FBC62bdbd299`
+
 The script verifies chain ID `5042002`, deploys the factory and both routers, creates a 10% tax
 token, whitelists the liquidity router, adds USDC liquidity, executes taxed swaps in both directions,
 and removes liquidity while asserting that the whitelisted liquidity operations are not taxed.
