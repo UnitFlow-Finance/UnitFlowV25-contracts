@@ -18,11 +18,12 @@ interface IArcFlowV25LiquidityRouter {
     function addLiquidityUSDC(
         address token,
         uint amountTokenDesired,
+        uint amountUSDCDesired,
         uint amountTokenMin,
         uint amountUSDCMin,
         address to,
         uint deadline
-    ) external payable returns (uint amountToken, uint amountUSDC, uint liquidity);
+    ) external returns (uint amountToken, uint amountUSDC, uint liquidity);
     
     function removeLiquidity(
         address tokenA,
