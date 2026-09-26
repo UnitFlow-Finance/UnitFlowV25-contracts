@@ -33,6 +33,12 @@ module.exports = {
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       gasPrice: "auto",
     },
+    arcMainnet: {
+      url: process.env.ARC_MAINNET_RPC_URL || "https://rpc.mainnet.arc.io",
+      chainId: 5042,
+      accounts: process.env.MAINNET_PRIVATE_KEY ? [process.env.MAINNET_PRIVATE_KEY] : [],
+      gasPrice: "auto",
+    },
   },
   etherscan: {
     apiKey: {

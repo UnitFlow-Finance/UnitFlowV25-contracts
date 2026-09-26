@@ -31,6 +31,21 @@ This deploys the factory first, passes its address and Arc USDC to both routers,
 bindings on-chain, and prints the three addresses, transaction hashes, explorer links, and frontend
 environment values together.
 
+## Arc mainnet deployment
+
+Arc mainnet uses chain ID `5042`, RPC `https://rpc.mainnet.arc.io`, and the same USDC system
+contract. Mainnet deliberately uses a separate key variable and an explicit safety confirmation:
+
+```bash
+export MAINNET_PRIVATE_KEY=0x...
+export CONFIRM_ARC_MAINNET=1
+npm run deploy:arcmainnet
+```
+
+The `deploy:arcmainnet` command deploys and validates the factory, liquidity router, and swap
+router in the same order as testnet. Keep `CONFIRM_ARC_MAINNET` unset during read-only work so an
+accidental invocation cannot submit deployment transactions.
+
 Latest verified `npm run deploy:arc` smoke deployment (2026-09-26):
 
 - Factory: `0xE5E8528dA254885451a5F0c26d506937A8F03151`
