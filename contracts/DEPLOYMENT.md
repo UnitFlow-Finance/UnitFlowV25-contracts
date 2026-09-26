@@ -29,12 +29,24 @@ Tax tokens must exempt `UnitFlowV25LiquidityRouter` according to their own exemp
 The swap router deliberately remains non-exempt so fee-on-transfer swap paths can measure actual
 pair inputs and recipient outputs.
 
-## Verified Arc testnet deployment
+## Active UnitFlow Arc testnet deployment
 
 Deployed and integration-tested on 2026-09-26:
 
-These addresses are retained as historical test evidence for the superseded pre-branding bytecode.
-The renamed UnitFlow contracts require a fresh deployment before production use.
+- Factory: `0x6C6E85DC0AEEEe40cFbd1D566ffe989464949897`
+- Liquidity router: `0x32b3d1C8CD92e5a9DCC474Da26BA49873DF29cD4`
+- Swap router: `0x0C731949cf6Eb4F25A390e198f2B5830080B06f6`
+- 10% test tax token: `0x02384bdb4E38065bC71d162dDBD7f39A988Bf6f2`
+- TAX/USDC pair: `0xdd16134C0c5093000FBf0b72Cd0dEE688Cc750DB`
+
+All deployment transactions succeeded. Runtime bytecode matches the compiled artifacts after
+normalizing router immutable values. The integration run verified router bindings, liquidity-token
+minting, taxed swaps in both directions, untaxed whitelisted liquidity addition/removal, and pair
+reserve movements.
+
+### Historical deployment
+
+These addresses are retained as test evidence for the superseded pre-branding bytecode:
 
 - Factory: `0x58005506FeC589EDd462f7936fddE3bd31c5652b`
 - Liquidity router: `0x0Fa2FCEa6CFE583eF759869625F918AA06280d16`
