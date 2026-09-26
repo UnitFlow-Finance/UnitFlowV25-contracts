@@ -60,6 +60,32 @@ describe("Arc ERC-20 USDC routers", function () {
     expect(await taxToken.balanceOf(owner.address)).to.be.lt(TAX_SUPPLY);
   });
 
+  it("keeps liquidity exempt while taxing swaps through the non-exempt swap router", async function () {
+    const { owner, trader, collector, usdc, taxToken, liquidityRouter, swapRouter, pair } = await deployFixture();
+    const liquidityRouterAddress = await liquidityRouter.getAddress();
+    const swapRouterAddress = await swapRouter.getAddress();
+
+    expect(await taxToken.isTaxExempt(liquidityRouterAddress)).to.equal(true);
+    expect(await taxToken.isTaxExempt(swapRouterAddress)).to.equal(false);
+    expect(await taxToken.balanceOf(collector.address)).to.equal(0);
+
+    const amountIn = ethers.parseEther("100");
+    await taxToken.transfer(trader.address, amountIn);
+    await taxToken.connect(trader).approve(swapRouterAddress, amountIn);
+    await swapRouter.connect(trader).swapExactTokensForUSDCSupportingFeeOnTransferTokens(
+      amountIn, 1, [await taxToken.getAddress(), await usdc.getAddress()], trader.address, MAX
+    );
+    expect(await taxToken.balanceOf(collector.address)).to.equal(amountIn / 10n);
+
+    const taxAfterSwap = await taxToken.balanceOf(collector.address);
+    const liquidity = (await pair.balanceOf(owner.address)) / 10n;
+    await pair.approve(liquidityRouterAddress, liquidity);
+    await liquidityRouter.removeLiquidityUSDCSupportingFeeOnTransferTokens(
+      await taxToken.getAddress(), liquidity, 1, 1, owner.address, MAX
+    );
+    expect(await taxToken.balanceOf(collector.address)).to.equal(taxAfterSwap);
+  });
+
   it("measures the recipient's post-tax output for USDC-to-tax-token swaps", async function () {
     const { trader, usdc, taxToken, swapRouter } = await deployFixture();
     const amountIn = ethers.parseUnits("100", 6);
