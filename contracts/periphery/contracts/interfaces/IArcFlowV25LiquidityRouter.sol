@@ -2,7 +2,7 @@ pragma solidity >=0.6.2;
 
 interface IArcFlowV25LiquidityRouter {
     function factory() external pure returns (address);
-    function WUSDC() external pure returns (address);
+    function USDC() external pure returns (address);
 
     function addLiquidity(
         address tokenA,

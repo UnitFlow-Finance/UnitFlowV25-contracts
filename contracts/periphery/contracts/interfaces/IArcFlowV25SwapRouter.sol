@@ -2,7 +2,7 @@ pragma solidity >=0.6.2;
 
 interface IArcFlowV25SwapRouter {
     function factory() external pure returns (address);
-    function WUSDC() external pure returns (address);
+    function USDC() external pure returns (address);
 
     function swapExactTokensForTokens(
         uint amountIn,
@@ -20,9 +20,8 @@ interface IArcFlowV25SwapRouter {
         uint deadline
     ) external returns (uint[] memory amounts);
     
-    function swapExactUSDCForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline)
+    function swapExactUSDCForTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
         external
-        payable
         returns (uint[] memory amounts);
         
     function swapTokensForExactUSDC(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
@@ -33,9 +32,8 @@ interface IArcFlowV25SwapRouter {
         external
         returns (uint[] memory amounts);
         
-    function swapUSDCForExactTokens(uint amountOut, address[] calldata path, address to, uint deadline)
+    function swapUSDCForExactTokens(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
         external
-        payable
         returns (uint[] memory amounts);
 
     function swapExactTokensForTokensSupportingFeeOnTransferTokens(
@@ -47,11 +45,12 @@ interface IArcFlowV25SwapRouter {
     ) external;
     
     function swapExactUSDCForTokensSupportingFeeOnTransferTokens(
+        uint amountIn,
         uint amountOutMin,
         address[] calldata path,
         address to,
         uint deadline
-    ) external payable;
+    ) external;
     
     function swapExactTokensForUSDCSupportingFeeOnTransferTokens(
         uint amountIn,

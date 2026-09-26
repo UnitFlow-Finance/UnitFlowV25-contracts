@@ -7,26 +7,22 @@ import './interfaces/IArcFlowV25SwapRouter.sol';
 import './libraries/ArcFlowV25Library.sol';
 import './libraries/SafeMath.sol';
 import './interfaces/IERC20.sol';
-import './interfaces/IWUSDC.sol';
 
 contract ArcFlowV25SwapRouter is IArcFlowV25SwapRouter {
     using SafeMath for uint;
 
     address public immutable override factory;
-    address public immutable override WUSDC;
+    address public immutable override USDC;
 
     modifier ensure(uint deadline) {
         require(deadline >= block.timestamp, 'ArcFlowV25SwapRouter: EXPIRED');
         _;
     }
 
-    constructor(address _factory, address _WUSDC) public {
+    constructor(address _factory, address _USDC) public {
+        require(_factory != address(0) && _USDC != address(0), 'ArcFlowV25SwapRouter: ZERO_ADDRESS');
         factory = _factory;
-        WUSDC = _WUSDC;
-    }
-
-    receive() external payable {
-        assert(msg.sender == WUSDC); // only accept USDC via fallback from the WUSDC contract
+        USDC = _USDC;
     }
 
     // **** SWAP ****
@@ -74,19 +70,17 @@ contract ArcFlowV25SwapRouter is IArcFlowV25SwapRouter {
         _swap(amounts, path, to);
     }
 
-    function swapExactUSDCForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline)
+    function swapExactUSDCForTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
         external
         virtual
         override
-        payable
         ensure(deadline)
         returns (uint[] memory amounts)
     {
-        require(path[0] == WUSDC, 'ArcFlowV25SwapRouter: INVALID_PATH');
-        amounts = ArcFlowV25Library.getAmountsOut(factory, msg.value, path);
+        require(path[0] == USDC, 'ArcFlowV25SwapRouter: INVALID_PATH');
+        amounts = ArcFlowV25Library.getAmountsOut(factory, amountIn, path);
         require(amounts[amounts.length - 1] >= amountOutMin, 'ArcFlowV25SwapRouter: INSUFFICIENT_OUTPUT_AMOUNT');
-        IWUSDC(WUSDC).deposit{value: amounts[0]}();
-        assert(IWUSDC(WUSDC).transfer(ArcFlowV25Library.pairFor(factory, path[0], path[1]), amounts[0]));
+        TransferHelper.safeTransferFrom(USDC, msg.sender, ArcFlowV25Library.pairFor(factory, path[0], path[1]), amounts[0]);
         _swap(amounts, path, to);
     }
 
@@ -97,15 +91,13 @@ contract ArcFlowV25SwapRouter is IArcFlowV25SwapRouter {
         ensure(deadline)
         returns (uint[] memory amounts)
     {
-        require(path[path.length - 1] == WUSDC, 'ArcFlowV25SwapRouter: INVALID_PATH');
+        require(path[path.length - 1] == USDC, 'ArcFlowV25SwapRouter: INVALID_PATH');
         amounts = ArcFlowV25Library.getAmountsIn(factory, amountOut, path);
         require(amounts[0] <= amountInMax, 'ArcFlowV25SwapRouter: EXCESSIVE_INPUT_AMOUNT');
         TransferHelper.safeTransferFrom(
             path[0], msg.sender, ArcFlowV25Library.pairFor(factory, path[0], path[1]), amounts[0]
         );
-        _swap(amounts, path, address(this));
-        IWUSDC(WUSDC).withdraw(amounts[amounts.length - 1]);
-        TransferHelper.safeTransferUSDC(to, amounts[amounts.length - 1]);
+        _swap(amounts, path, to);
     }
 
     function swapExactTokensForUSDC(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
@@ -115,33 +107,27 @@ contract ArcFlowV25SwapRouter is IArcFlowV25SwapRouter {
         ensure(deadline)
         returns (uint[] memory amounts)
     {
-        require(path[path.length - 1] == WUSDC, 'ArcFlowV25SwapRouter: INVALID_PATH');
+        require(path[path.length - 1] == USDC, 'ArcFlowV25SwapRouter: INVALID_PATH');
         amounts = ArcFlowV25Library.getAmountsOut(factory, amountIn, path);
         require(amounts[amounts.length - 1] >= amountOutMin, 'ArcFlowV25SwapRouter: INSUFFICIENT_OUTPUT_AMOUNT');
         TransferHelper.safeTransferFrom(
             path[0], msg.sender, ArcFlowV25Library.pairFor(factory, path[0], path[1]), amounts[0]
         );
-        _swap(amounts, path, address(this));
-        IWUSDC(WUSDC).withdraw(amounts[amounts.length - 1]);
-        TransferHelper.safeTransferUSDC(to, amounts[amounts.length - 1]);
+        _swap(amounts, path, to);
     }
 
-    function swapUSDCForExactTokens(uint amountOut, address[] calldata path, address to, uint deadline)
+    function swapUSDCForExactTokens(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
         external
         virtual
         override
-        payable
         ensure(deadline)
         returns (uint[] memory amounts)
     {
-        require(path[0] == WUSDC, 'ArcFlowV25SwapRouter: INVALID_PATH');
+        require(path[0] == USDC, 'ArcFlowV25SwapRouter: INVALID_PATH');
         amounts = ArcFlowV25Library.getAmountsIn(factory, amountOut, path);
-        require(amounts[0] <= msg.value, 'ArcFlowV25SwapRouter: EXCESSIVE_INPUT_AMOUNT');
-        IWUSDC(WUSDC).deposit{value: amounts[0]}();
-        assert(IWUSDC(WUSDC).transfer(ArcFlowV25Library.pairFor(factory, path[0], path[1]), amounts[0]));
+        require(amounts[0] <= amountInMax, 'ArcFlowV25SwapRouter: EXCESSIVE_INPUT_AMOUNT');
+        TransferHelper.safeTransferFrom(USDC, msg.sender, ArcFlowV25Library.pairFor(factory, path[0], path[1]), amounts[0]);
         _swap(amounts, path, to);
-        // refund dust eth, if any
-        if (msg.value > amounts[0]) TransferHelper.safeTransferUSDC(msg.sender, msg.value - amounts[0]);
     }
 
     // **** SWAP (supporting fee-on-transfer tokens) ****
@@ -184,6 +170,7 @@ contract ArcFlowV25SwapRouter is IArcFlowV25SwapRouter {
     }
 
     function swapExactUSDCForTokensSupportingFeeOnTransferTokens(
+        uint amountIn,
         uint amountOutMin,
         address[] calldata path,
         address to,
@@ -192,13 +179,10 @@ contract ArcFlowV25SwapRouter is IArcFlowV25SwapRouter {
         external
         virtual
         override
-        payable
         ensure(deadline)
     {
-        require(path[0] == WUSDC, 'ArcFlowV25SwapRouter: INVALID_PATH');
-        uint amountIn = msg.value;
-        IWUSDC(WUSDC).deposit{value: amountIn}();
-        assert(IWUSDC(WUSDC).transfer(ArcFlowV25Library.pairFor(factory, path[0], path[1]), amountIn));
+        require(path[0] == USDC, 'ArcFlowV25SwapRouter: INVALID_PATH');
+        TransferHelper.safeTransferFrom(USDC, msg.sender, ArcFlowV25Library.pairFor(factory, path[0], path[1]), amountIn);
         uint balanceBefore = IERC20(path[path.length - 1]).balanceOf(to);
         _swapSupportingFeeOnTransferTokens(path, to);
         require(
@@ -219,15 +203,16 @@ contract ArcFlowV25SwapRouter is IArcFlowV25SwapRouter {
         override
         ensure(deadline)
     {
-        require(path[path.length - 1] == WUSDC, 'ArcFlowV25SwapRouter: INVALID_PATH');
+        require(path[path.length - 1] == USDC, 'ArcFlowV25SwapRouter: INVALID_PATH');
         TransferHelper.safeTransferFrom(
             path[0], msg.sender, ArcFlowV25Library.pairFor(factory, path[0], path[1]), amountIn
         );
-        _swapSupportingFeeOnTransferTokens(path, address(this));
-        uint amountOut = IERC20(WUSDC).balanceOf(address(this));
-        require(amountOut >= amountOutMin, 'ArcFlowV25SwapRouter: INSUFFICIENT_OUTPUT_AMOUNT');
-        IWUSDC(WUSDC).withdraw(amountOut);
-        TransferHelper.safeTransferUSDC(to, amountOut);
+        uint balanceBefore = IERC20(USDC).balanceOf(to);
+        _swapSupportingFeeOnTransferTokens(path, to);
+        require(
+            IERC20(USDC).balanceOf(to).sub(balanceBefore) >= amountOutMin,
+            'ArcFlowV25SwapRouter: INSUFFICIENT_OUTPUT_AMOUNT'
+        );
     }
 
     // **** LIBRARY FUNCTIONS ****

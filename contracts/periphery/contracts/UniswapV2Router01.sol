@@ -6,24 +6,20 @@ import './libraries/TransferHelper.sol';
 import './libraries/ArcFlowV25Library.sol';
 import './interfaces/IArcFlowV25Router01.sol';
 import './interfaces/IERC20.sol';
-import './interfaces/IWUSDC.sol';
 
 contract ArcFlowV25Router01 is IArcFlowV25Router01 {
     address public immutable override factory;
-    address public immutable override WUSDC;
+    address public immutable override USDC;
 
     modifier ensure(uint deadline) {
         require(deadline >= block.timestamp, 'ArcFlowV25Router: EXPIRED');
         _;
     }
 
-    constructor(address _factory, address _WUSDC) public {
+    constructor(address _factory, address _USDC) public {
+        require(_factory != address(0) && _USDC != address(0), 'ArcFlowV25Router: ZERO_ADDRESS');
         factory = _factory;
-        WUSDC = _WUSDC;
-    }
-
-    receive() external payable {
-        assert(msg.sender == WUSDC); // only accept USDC via fallback from the WUSDC contract
+        USDC = _USDC;
     }
 
     // **** ADD LIQUIDITY ****
@@ -74,25 +70,24 @@ contract ArcFlowV25Router01 is IArcFlowV25Router01 {
     function addLiquidityUSDC(
         address token,
         uint amountTokenDesired,
+        uint amountUSDCDesired,
         uint amountTokenMin,
         uint amountUSDCMin,
         address to,
         uint deadline
-    ) external override payable ensure(deadline) returns (uint amountToken, uint amountUSDC, uint liquidity) {
+    ) external override ensure(deadline) returns (uint amountToken, uint amountUSDC, uint liquidity) {
         (amountToken, amountUSDC) = _addLiquidity(
             token,
-            WUSDC,
+            USDC,
             amountTokenDesired,
-            msg.value,
+            amountUSDCDesired,
             amountTokenMin,
             amountUSDCMin
         );
-        address pair = ArcFlowV25Library.pairFor(factory, token, WUSDC);
+        address pair = ArcFlowV25Library.pairFor(factory, token, USDC);
         TransferHelper.safeTransferFrom(token, msg.sender, pair, amountToken);
-        IWUSDC(WUSDC).deposit{value: amountUSDC}();
-        assert(IWUSDC(WUSDC).transfer(pair, amountUSDC));
+        TransferHelper.safeTransferFrom(USDC, msg.sender, pair, amountUSDC);
         liquidity = IArcFlowV25Pair(pair).mint(to);
-        if (msg.value > amountUSDC) TransferHelper.safeTransferUSDC(msg.sender, msg.value - amountUSDC); // refund dust eth, if any
     }
 
     // **** REMOVE LIQUIDITY ****
@@ -123,7 +118,7 @@ contract ArcFlowV25Router01 is IArcFlowV25Router01 {
     ) public override ensure(deadline) returns (uint amountToken, uint amountUSDC) {
         (amountToken, amountUSDC) = removeLiquidity(
             token,
-            WUSDC,
+            USDC,
             liquidity,
             amountTokenMin,
             amountUSDCMin,
@@ -131,8 +126,7 @@ contract ArcFlowV25Router01 is IArcFlowV25Router01 {
             deadline
         );
         TransferHelper.safeTransfer(token, to, amountToken);
-        IWUSDC(WUSDC).withdraw(amountUSDC);
-        TransferHelper.safeTransferUSDC(to, amountUSDC);
+        TransferHelper.safeTransfer(USDC, to, amountUSDC);
     }
     function removeLiquidityWithPermit(
         address tokenA,
@@ -158,7 +152,7 @@ contract ArcFlowV25Router01 is IArcFlowV25Router01 {
         uint deadline,
         bool approveMax, uint8 v, bytes32 r, bytes32 s
     ) external override returns (uint amountToken, uint amountUSDC) {
-        address pair = ArcFlowV25Library.pairFor(factory, token, WUSDC);
+        address pair = ArcFlowV25Library.pairFor(factory, token, USDC);
         uint value = approveMax ? uint(-1) : liquidity;
         IArcFlowV25Pair(pair).permit(msg.sender, address(this), value, deadline, v, r, s);
         (amountToken, amountUSDC) = removeLiquidityUSDC(token, liquidity, amountTokenMin, amountUSDCMin, to, deadline);
@@ -200,18 +194,16 @@ contract ArcFlowV25Router01 is IArcFlowV25Router01 {
         TransferHelper.safeTransferFrom(path[0], msg.sender, ArcFlowV25Library.pairFor(factory, path[0], path[1]), amounts[0]);
         _swap(amounts, path, to);
     }
-    function swapExactUSDCForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline)
+    function swapExactUSDCForTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
         external
         override
-        payable
         ensure(deadline)
         returns (uint[] memory amounts)
     {
-        require(path[0] == WUSDC, 'ArcFlowV25Router: INVALID_PATH');
-        amounts = ArcFlowV25Library.getAmountsOut(factory, msg.value, path);
+        require(path[0] == USDC, 'ArcFlowV25Router: INVALID_PATH');
+        amounts = ArcFlowV25Library.getAmountsOut(factory, amountIn, path);
         require(amounts[amounts.length - 1] >= amountOutMin, 'ArcFlowV25Router: INSUFFICIENT_OUTPUT_AMOUNT');
-        IWUSDC(WUSDC).deposit{value: amounts[0]}();
-        assert(IWUSDC(WUSDC).transfer(ArcFlowV25Library.pairFor(factory, path[0], path[1]), amounts[0]));
+        TransferHelper.safeTransferFrom(USDC, msg.sender, ArcFlowV25Library.pairFor(factory, path[0], path[1]), amounts[0]);
         _swap(amounts, path, to);
     }
     function swapTokensForExactUSDC(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
@@ -220,13 +212,11 @@ contract ArcFlowV25Router01 is IArcFlowV25Router01 {
         ensure(deadline)
         returns (uint[] memory amounts)
     {
-        require(path[path.length - 1] == WUSDC, 'ArcFlowV25Router: INVALID_PATH');
+        require(path[path.length - 1] == USDC, 'ArcFlowV25Router: INVALID_PATH');
         amounts = ArcFlowV25Library.getAmountsIn(factory, amountOut, path);
         require(amounts[0] <= amountInMax, 'ArcFlowV25Router: EXCESSIVE_INPUT_AMOUNT');
         TransferHelper.safeTransferFrom(path[0], msg.sender, ArcFlowV25Library.pairFor(factory, path[0], path[1]), amounts[0]);
-        _swap(amounts, path, address(this));
-        IWUSDC(WUSDC).withdraw(amounts[amounts.length - 1]);
-        TransferHelper.safeTransferUSDC(to, amounts[amounts.length - 1]);
+        _swap(amounts, path, to);
     }
     function swapExactTokensForUSDC(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
         external
@@ -234,28 +224,23 @@ contract ArcFlowV25Router01 is IArcFlowV25Router01 {
         ensure(deadline)
         returns (uint[] memory amounts)
     {
-        require(path[path.length - 1] == WUSDC, 'ArcFlowV25Router: INVALID_PATH');
+        require(path[path.length - 1] == USDC, 'ArcFlowV25Router: INVALID_PATH');
         amounts = ArcFlowV25Library.getAmountsOut(factory, amountIn, path);
         require(amounts[amounts.length - 1] >= amountOutMin, 'ArcFlowV25Router: INSUFFICIENT_OUTPUT_AMOUNT');
         TransferHelper.safeTransferFrom(path[0], msg.sender, ArcFlowV25Library.pairFor(factory, path[0], path[1]), amounts[0]);
-        _swap(amounts, path, address(this));
-        IWUSDC(WUSDC).withdraw(amounts[amounts.length - 1]);
-        TransferHelper.safeTransferUSDC(to, amounts[amounts.length - 1]);
+        _swap(amounts, path, to);
     }
-    function swapUSDCForExactTokens(uint amountOut, address[] calldata path, address to, uint deadline)
+    function swapUSDCForExactTokens(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
         external
         override
-        payable
         ensure(deadline)
         returns (uint[] memory amounts)
     {
-        require(path[0] == WUSDC, 'ArcFlowV25Router: INVALID_PATH');
+        require(path[0] == USDC, 'ArcFlowV25Router: INVALID_PATH');
         amounts = ArcFlowV25Library.getAmountsIn(factory, amountOut, path);
-        require(amounts[0] <= msg.value, 'ArcFlowV25Router: EXCESSIVE_INPUT_AMOUNT');
-        IWUSDC(WUSDC).deposit{value: amounts[0]}();
-        assert(IWUSDC(WUSDC).transfer(ArcFlowV25Library.pairFor(factory, path[0], path[1]), amounts[0]));
+        require(amounts[0] <= amountInMax, 'ArcFlowV25Router: EXCESSIVE_INPUT_AMOUNT');
+        TransferHelper.safeTransferFrom(USDC, msg.sender, ArcFlowV25Library.pairFor(factory, path[0], path[1]), amounts[0]);
         _swap(amounts, path, to);
-        if (msg.value > amounts[0]) TransferHelper.safeTransferUSDC(msg.sender, msg.value - amounts[0]); // refund dust eth, if any
     }
 
     function quote(uint amountA, uint reserveA, uint reserveB) public pure override returns (uint amountB) {
@@ -267,7 +252,7 @@ contract ArcFlowV25Router01 is IArcFlowV25Router01 {
     }
 
     function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) public pure override returns (uint amountIn) {
-        return ArcFlowV25Library.getAmountOut(amountOut, reserveIn, reserveOut);
+        return ArcFlowV25Library.getAmountIn(amountOut, reserveIn, reserveOut);
     }
 
     function getAmountsOut(uint amountIn, address[] memory path) public view override returns (uint[] memory amounts) {

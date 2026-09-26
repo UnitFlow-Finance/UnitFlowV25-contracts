@@ -29,11 +29,12 @@ interface IArcFlowV25Router02 is IArcFlowV25Router01 {
         uint deadline
     ) external;
     function swapExactUSDCForTokensSupportingFeeOnTransferTokens(
+        uint amountIn,
         uint amountOutMin,
         address[] calldata path,
         address to,
         uint deadline
-    ) external payable;
+    ) external;
     function swapExactTokensForUSDCSupportingFeeOnTransferTokens(
         uint amountIn,
         uint amountOutMin,

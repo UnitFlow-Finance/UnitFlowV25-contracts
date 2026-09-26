@@ -7,26 +7,22 @@ import './interfaces/IArcFlowV25LiquidityRouter.sol';
 import './libraries/ArcFlowV25Library.sol';
 import './libraries/SafeMath.sol';
 import './interfaces/IERC20.sol';
-import './interfaces/IWUSDC.sol';
 
 contract ArcFlowV25LiquidityRouter is IArcFlowV25LiquidityRouter {
     using SafeMath for uint;
 
     address public immutable override factory;
-    address public immutable override WUSDC;
+    address public immutable override USDC;
 
     modifier ensure(uint deadline) {
         require(deadline >= block.timestamp, 'ArcFlowV25LiquidityRouter: EXPIRED');
         _;
     }
 
-    constructor(address _factory, address _WUSDC) public {
+    constructor(address _factory, address _USDC) public {
+        require(_factory != address(0) && _USDC != address(0), 'ArcFlowV25LiquidityRouter: ZERO_ADDRESS');
         factory = _factory;
-        WUSDC = _WUSDC;
-    }
-
-    receive() external payable {
-        assert(msg.sender == WUSDC); // only accept USDC via fallback from the WUSDC contract
+        USDC = _USDC;
     }
 
     // **** ADD LIQUIDITY ****
@@ -79,26 +75,24 @@ contract ArcFlowV25LiquidityRouter is IArcFlowV25LiquidityRouter {
     function addLiquidityUSDC(
         address token,
         uint amountTokenDesired,
+        uint amountUSDCDesired,
         uint amountTokenMin,
         uint amountUSDCMin,
         address to,
         uint deadline
-    ) external virtual override payable ensure(deadline) returns (uint amountToken, uint amountUSDC, uint liquidity) {
+    ) external virtual override ensure(deadline) returns (uint amountToken, uint amountUSDC, uint liquidity) {
         (amountToken, amountUSDC) = _addLiquidity(
             token,
-            WUSDC,
+            USDC,
             amountTokenDesired,
-            msg.value,
+            amountUSDCDesired,
             amountTokenMin,
             amountUSDCMin
         );
-        address pair = ArcFlowV25Library.pairFor(factory, token, WUSDC);
+        address pair = ArcFlowV25Library.pairFor(factory, token, USDC);
         TransferHelper.safeTransferFrom(token, msg.sender, pair, amountToken);
-        IWUSDC(WUSDC).deposit{value: amountUSDC}();
-        assert(IWUSDC(WUSDC).transfer(pair, amountUSDC));
+        TransferHelper.safeTransferFrom(USDC, msg.sender, pair, amountUSDC);
         liquidity = IArcFlowV25Pair(pair).mint(to);
-        // refund dust eth, if any
-        if (msg.value > amountUSDC) TransferHelper.safeTransferUSDC(msg.sender, msg.value - amountUSDC);
     }
 
     // **** REMOVE LIQUIDITY ****
@@ -130,7 +124,7 @@ contract ArcFlowV25LiquidityRouter is IArcFlowV25LiquidityRouter {
     ) public virtual override ensure(deadline) returns (uint amountToken, uint amountUSDC) {
         (amountToken, amountUSDC) = removeLiquidity(
             token,
-            WUSDC,
+            USDC,
             liquidity,
             amountTokenMin,
             amountUSDCMin,
@@ -138,8 +132,7 @@ contract ArcFlowV25LiquidityRouter is IArcFlowV25LiquidityRouter {
             deadline
         );
         TransferHelper.safeTransfer(token, to, amountToken);
-        IWUSDC(WUSDC).withdraw(amountUSDC);
-        TransferHelper.safeTransferUSDC(to, amountUSDC);
+        TransferHelper.safeTransfer(USDC, to, amountUSDC);
     }
 
     function removeLiquidityWithPermit(
@@ -167,7 +160,7 @@ contract ArcFlowV25LiquidityRouter is IArcFlowV25LiquidityRouter {
         uint deadline,
         bool approveMax, uint8 v, bytes32 r, bytes32 s
     ) external virtual override returns (uint amountToken, uint amountUSDC) {
-        address pair = ArcFlowV25Library.pairFor(factory, token, WUSDC);
+        address pair = ArcFlowV25Library.pairFor(factory, token, USDC);
         uint value = approveMax ? uint(-1) : liquidity;
         IArcFlowV25Pair(pair).permit(msg.sender, address(this), value, deadline, v, r, s);
         (amountToken, amountUSDC) = removeLiquidityUSDC(token, liquidity, amountTokenMin, amountUSDCMin, to, deadline);
@@ -181,18 +174,24 @@ contract ArcFlowV25LiquidityRouter is IArcFlowV25LiquidityRouter {
         address to,
         uint deadline
     ) public virtual override ensure(deadline) returns (uint amountUSDC) {
+        uint tokenBalanceBefore = IERC20(token).balanceOf(address(this));
         (, amountUSDC) = removeLiquidity(
             token,
-            WUSDC,
+            USDC,
             liquidity,
-            amountTokenMin,
+            0,
             amountUSDCMin,
             address(this),
             deadline
         );
-        TransferHelper.safeTransfer(token, to, IERC20(token).balanceOf(address(this)));
-        IWUSDC(WUSDC).withdraw(amountUSDC);
-        TransferHelper.safeTransferUSDC(to, amountUSDC);
+        uint tokenAmount = IERC20(token).balanceOf(address(this)).sub(tokenBalanceBefore);
+        uint recipientBalanceBefore = IERC20(token).balanceOf(to);
+        TransferHelper.safeTransfer(token, to, tokenAmount);
+        require(
+            IERC20(token).balanceOf(to).sub(recipientBalanceBefore) >= amountTokenMin,
+            'ArcFlowV25LiquidityRouter: INSUFFICIENT_TOKEN_AMOUNT'
+        );
+        TransferHelper.safeTransfer(USDC, to, amountUSDC);
     }
 
     function removeLiquidityUSDCWithPermitSupportingFeeOnTransferTokens(
@@ -204,7 +203,7 @@ contract ArcFlowV25LiquidityRouter is IArcFlowV25LiquidityRouter {
         uint deadline,
         bool approveMax, uint8 v, bytes32 r, bytes32 s
     ) external virtual override returns (uint amountUSDC) {
-        address pair = ArcFlowV25Library.pairFor(factory, token, WUSDC);
+        address pair = ArcFlowV25Library.pairFor(factory, token, USDC);
         uint value = approveMax ? uint(-1) : liquidity;
         IArcFlowV25Pair(pair).permit(msg.sender, address(this), value, deadline, v, r, s);
         amountUSDC = removeLiquidityUSDCSupportingFeeOnTransferTokens(

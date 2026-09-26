@@ -1,9 +1,15 @@
 {
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:arc": "hardhat test test/arc-usdc-router.test.js"
+  },
   "dependencies": {
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
     "@nomicfoundation/hardhat-verify": "^2.1.3",
     "@openzeppelin/contracts": "^5.4.0",
     "@uniswap/lib": "^4.0.1-alpha",
+    "dotenv": "^17.2.2",
     "hardhat": "^2.26.5"
   }
 }

@@ -5,7 +5,7 @@
   "abi": [
     {
       "inputs": [],
-      "name": "WUSDC",
+      "name": "USDC",
       "outputs": [
         {
           "internalType": "address",
@@ -94,6 +94,11 @@
         },
         {
           "internalType": "uint256",
+          "name": "amountUSDCDesired",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
           "name": "amountTokenMin",
           "type": "uint256"
         },
@@ -131,7 +136,7 @@
           "type": "uint256"
         }
       ],
-      "stateMutability": "payable",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {

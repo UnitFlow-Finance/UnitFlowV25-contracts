@@ -1,8 +1,8 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/core/contracts/ArcFlowV25ERC20.sol": {
-      "lastModificationDate": 1764089514466,
+    "/workspaces/workspaces/contracts/core/contracts/ArcFlowV25ERC20.sol": {
+      "lastModificationDate": 1790438523366,
       "contentHash": "e313d96b61626d5e964c8f3ebb295347",
       "sourceName": "contracts/core/contracts/ArcFlowV25ERC20.sol",
       "solcConfig": {
@@ -39,8 +39,8 @@
         "ArcFlowV25ERC20"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/core/contracts/libraries/SafeMath.sol": {
-      "lastModificationDate": 1764060706812,
+    "/workspaces/workspaces/contracts/core/contracts/libraries/SafeMath.sol": {
+      "lastModificationDate": 1790438523366,
       "contentHash": "a65356c329efeffba75210664f5df3cd",
       "sourceName": "contracts/core/contracts/libraries/SafeMath.sol",
       "solcConfig": {
@@ -74,8 +74,8 @@
         "SafeMath"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/core/contracts/test/ERC20.sol": {
-      "lastModificationDate": 1764060706813,
+    "/workspaces/workspaces/contracts/core/contracts/test/ERC20.sol": {
+      "lastModificationDate": 1790438523366,
       "contentHash": "0764e69b41cf644d8eab5f48b6bcc071",
       "sourceName": "contracts/core/contracts/test/ERC20.sol",
       "solcConfig": {
@@ -111,8 +111,8 @@
         "ERC20"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/core/contracts/ArcFlowV25Pair.sol": {
-      "lastModificationDate": 1764060706810,
+    "/workspaces/workspaces/contracts/core/contracts/ArcFlowV25Pair.sol": {
+      "lastModificationDate": 1790438523366,
       "contentHash": "46e942c49a6a474074a86a80d32f058f",
       "sourceName": "contracts/core/contracts/ArcFlowV25Pair.sol",
       "solcConfig": {
@@ -154,8 +154,8 @@
         "ArcFlowV25Pair"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/core/contracts/libraries/Math.sol": {
-      "lastModificationDate": 1764060706812,
+    "/workspaces/workspaces/contracts/core/contracts/libraries/Math.sol": {
+      "lastModificationDate": 1790438523366,
       "contentHash": "bee6c1959728d5d42c14151076cebd83",
       "sourceName": "contracts/core/contracts/libraries/Math.sol",
       "solcConfig": {
@@ -189,8 +189,8 @@
         "Math"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/core/contracts/libraries/UQ112x112.sol": {
-      "lastModificationDate": 1764060706812,
+    "/workspaces/workspaces/contracts/core/contracts/libraries/UQ112x112.sol": {
+      "lastModificationDate": 1790438523366,
       "contentHash": "2a703244e9f645c6fb297a983ce7c9c4",
       "sourceName": "contracts/core/contracts/libraries/UQ112x112.sol",
       "solcConfig": {
@@ -224,8 +224,8 @@
         "UQ112x112"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/core/contracts/ArcFlowV25Factory.sol": {
-      "lastModificationDate": 1764060706810,
+    "/workspaces/workspaces/contracts/core/contracts/ArcFlowV25Factory.sol": {
+      "lastModificationDate": 1790438523366,
       "contentHash": "fb93bd58552527189a0ea0a12e9b97cc",
       "sourceName": "contracts/core/contracts/ArcFlowV25Factory.sol",
       "solcConfig": {
@@ -262,8 +262,83 @@
         "ArcFlowV25Factory"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/core/contracts/interfaces/IArcFlowV25Callee.sol": {
-      "lastModificationDate": 1764060706810,
+    "/workspaces/workspaces/contracts/core/contracts/test/TaxToken.sol": {
+      "lastModificationDate": 1790438720378,
+      "contentHash": "5f9e4d209e413416a6f67e936a786c8c",
+      "sourceName": "contracts/core/contracts/test/TaxToken.sol",
+      "solcConfig": {
+        "version": "0.5.16",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../libraries/SafeMath.sol"
+      ],
+      "versionPragmas": [
+        "=0.5.16"
+      ],
+      "artifacts": [
+        "TaxToken"
+      ]
+    },
+    "/workspaces/workspaces/contracts/core/contracts/USDC.sol": {
+      "lastModificationDate": 1790438523366,
+      "contentHash": "ae13e630984e55ca8ea359713d7ba1df",
+      "sourceName": "contracts/core/contracts/USDC.sol",
+      "solcConfig": {
+        "version": "0.5.16",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./interfaces/IArcFlowV25ERC20.sol",
+        "./libraries/SafeMath.sol"
+      ],
+      "versionPragmas": [
+        "=0.5.16"
+      ],
+      "artifacts": [
+        "USDC"
+      ]
+    },
+    "/workspaces/workspaces/contracts/core/contracts/interfaces/IArcFlowV25Callee.sol": {
+      "lastModificationDate": 1790438523366,
       "contentHash": "27aa35f30747c994cf0f8f098c858e71",
       "sourceName": "contracts/core/contracts/interfaces/IArcFlowV25Callee.sol",
       "solcConfig": {
@@ -297,8 +372,8 @@
         "IArcFlowV25Callee"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/core/contracts/interfaces/IArcFlowV25Factory.sol": {
-      "lastModificationDate": 1764060706811,
+    "/workspaces/workspaces/contracts/core/contracts/interfaces/IArcFlowV25Factory.sol": {
+      "lastModificationDate": 1790438523366,
       "contentHash": "dc515ecdd45934afbba31f8c6b58e21b",
       "sourceName": "contracts/core/contracts/interfaces/IArcFlowV25Factory.sol",
       "solcConfig": {
@@ -332,8 +407,8 @@
         "IArcFlowV25Factory"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/libraries/UniswapV2LiquidityMathLibrary.sol": {
-      "lastModificationDate": 1764064788995,
+    "/workspaces/workspaces/contracts/periphery/contracts/libraries/UniswapV2LiquidityMathLibrary.sol": {
+      "lastModificationDate": 1790438523370,
       "contentHash": "fd377a25e3586138f7040834b099c83f",
       "sourceName": "contracts/periphery/contracts/libraries/UniswapV2LiquidityMathLibrary.sol",
       "solcConfig": {
@@ -374,8 +449,8 @@
         "ArcFlowV25LiquidityMathLibrary"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/core/contracts/interfaces/IArcFlowV25Pair.sol": {
-      "lastModificationDate": 1764060706811,
+    "/workspaces/workspaces/contracts/core/contracts/interfaces/IArcFlowV25Pair.sol": {
+      "lastModificationDate": 1790438523366,
       "contentHash": "b9b42719c45b3b6dcf81dc2dc0af67ef",
       "sourceName": "contracts/core/contracts/interfaces/IArcFlowV25Pair.sol",
       "solcConfig": {
@@ -409,8 +484,8 @@
         "IArcFlowV25Pair"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/libraries/SafeMath.sol": {
-      "lastModificationDate": 1764060706830,
+    "/workspaces/workspaces/contracts/periphery/contracts/libraries/SafeMath.sol": {
+      "lastModificationDate": 1790438523370,
       "contentHash": "9f77127a0e2c55c2058453327e84bde3",
       "sourceName": "contracts/periphery/contracts/libraries/SafeMath.sol",
       "solcConfig": {
@@ -444,8 +519,8 @@
         "SafeMath"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/libraries/ArcFlowV25Library.sol": {
-      "lastModificationDate": 1764085840000,
+    "/workspaces/workspaces/contracts/periphery/contracts/libraries/ArcFlowV25Library.sol": {
+      "lastModificationDate": 1790438523370,
       "contentHash": "db9e0f6e486298607116ee07f95bb54e",
       "sourceName": "contracts/periphery/contracts/libraries/ArcFlowV25Library.sol",
       "solcConfig": {
@@ -483,8 +558,8 @@
         "ArcFlowV25Library"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/node_modules/@uniswap/lib/contracts/libraries/Babylonian.sol": {
-      "lastModificationDate": 1764064857808,
+    "/workspaces/workspaces/node_modules/@uniswap/lib/contracts/libraries/Babylonian.sol": {
+      "lastModificationDate": 1790438747087,
       "contentHash": "3f7a9d2b13eebc20350a1cc42ed09b16",
       "sourceName": "@uniswap/lib/contracts/libraries/Babylonian.sol",
       "solcConfig": {
@@ -518,8 +593,8 @@
         "Babylonian"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/node_modules/@uniswap/lib/contracts/libraries/FullMath.sol": {
-      "lastModificationDate": 1764064857817,
+    "/workspaces/workspaces/node_modules/@uniswap/lib/contracts/libraries/FullMath.sol": {
+      "lastModificationDate": 1790438747214,
       "contentHash": "23bbd047cedfd8027fb139fcab949cc0",
       "sourceName": "@uniswap/lib/contracts/libraries/FullMath.sol",
       "solcConfig": {
@@ -553,8 +628,8 @@
         "FullMath"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/node_modules/@uniswap/lib/contracts/libraries/FixedPoint.sol": {
-      "lastModificationDate": 1764064857816,
+    "/workspaces/workspaces/node_modules/@uniswap/lib/contracts/libraries/FixedPoint.sol": {
+      "lastModificationDate": 1790438747167,
       "contentHash": "9c78b75695500ec38a85fea7d923fbf0",
       "sourceName": "@uniswap/lib/contracts/libraries/FixedPoint.sol",
       "solcConfig": {
@@ -592,8 +667,8 @@
         "FixedPoint"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/node_modules/@uniswap/lib/contracts/libraries/BitMath.sol": {
-      "lastModificationDate": 1764064857811,
+    "/workspaces/workspaces/node_modules/@uniswap/lib/contracts/libraries/BitMath.sol": {
+      "lastModificationDate": 1790438747116,
       "contentHash": "9268c1120c875c017e31caad9aa38921",
       "sourceName": "@uniswap/lib/contracts/libraries/BitMath.sol",
       "solcConfig": {
@@ -627,8 +702,8 @@
         "BitMath"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/libraries/UniswapV2OracleLibrary.sol": {
-      "lastModificationDate": 1764064808319,
+    "/workspaces/workspaces/contracts/periphery/contracts/libraries/UniswapV2OracleLibrary.sol": {
+      "lastModificationDate": 1790438523370,
       "contentHash": "95f276bc5a3ca9e3c4d6a40e09348f9a",
       "sourceName": "contracts/periphery/contracts/libraries/UniswapV2OracleLibrary.sol",
       "solcConfig": {
@@ -665,601 +740,8 @@
         "ArcFlowV25OracleLibrary"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/UniswapV2Router02.sol": {
-      "lastModificationDate": 1764086848206,
-      "contentHash": "6110af8c204b039ea72e0c14e4842d82",
-      "sourceName": "contracts/periphery/contracts/UniswapV2Router02.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../../core/contracts/interfaces/IArcFlowV25Factory.sol",
-        "./libraries/TransferHelper.sol",
-        "./interfaces/IArcFlowV25Router02.sol",
-        "./libraries/ArcFlowV25Library.sol",
-        "./libraries/SafeMath.sol",
-        "./interfaces/IERC20.sol",
-        "./interfaces/IWUSDC.sol"
-      ],
-      "versionPragmas": [
-        "=0.6.6"
-      ],
-      "artifacts": [
-        "ArcFlowV25Router02"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/interfaces/IArcFlowV25Router02.sol": {
-      "lastModificationDate": 1764086364493,
-      "contentHash": "1459b609e37ce8027d3d419d61ece396",
-      "sourceName": "contracts/periphery/contracts/interfaces/IArcFlowV25Router02.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./IArcFlowV25Router01.sol"
-      ],
-      "versionPragmas": [
-        ">=0.6.2"
-      ],
-      "artifacts": [
-        "IArcFlowV25Router02"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/interfaces/IERC20.sol": {
-      "lastModificationDate": 1764060706829,
-      "contentHash": "3d2b948a9266ee66b6e739de97c7e6e9",
-      "sourceName": "contracts/periphery/contracts/interfaces/IERC20.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IERC20"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/interfaces/IWUSDC.sol": {
-      "lastModificationDate": 1764067021383,
-      "contentHash": "e9eeb82bee7d837555e835ae1b0a9b12",
-      "sourceName": "contracts/periphery/contracts/interfaces/IWUSDC.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IWUSDC"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/node_modules/@uniswap/lib/contracts/libraries/TransferHelper.sol": {
-      "lastModificationDate": 1764064857821,
-      "contentHash": "7fad4038612c5f040ebd746a3e58e0db",
-      "sourceName": "@uniswap/lib/contracts/libraries/TransferHelper.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.6.0"
-      ],
-      "artifacts": [
-        "TransferHelper"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/interfaces/IArcFlowV25Router01.sol": {
-      "lastModificationDate": 1764086364490,
-      "contentHash": "c6c0c3fa191cbc0b0e2ad05191598ff1",
-      "sourceName": "contracts/periphery/contracts/interfaces/IArcFlowV25Router01.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.6.2"
-      ],
-      "artifacts": [
-        "IArcFlowV25Router01"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/UniswapV2Router01.sol": {
-      "lastModificationDate": 1764086848205,
-      "contentHash": "d4a95708d4bb2e3cd3d49634699d9b3f",
-      "sourceName": "contracts/periphery/contracts/UniswapV2Router01.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../../core/contracts/interfaces/IArcFlowV25Factory.sol",
-        "./libraries/TransferHelper.sol",
-        "./libraries/ArcFlowV25Library.sol",
-        "./interfaces/IArcFlowV25Router01.sol",
-        "./interfaces/IERC20.sol",
-        "./interfaces/IWUSDC.sol"
-      ],
-      "versionPragmas": [
-        "=0.6.6"
-      ],
-      "artifacts": [
-        "ArcFlowV25Router01"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/ArcFlowV25SwapRouter.sol": {
-      "lastModificationDate": 1764086761375,
-      "contentHash": "b7e06451cc0a7ef65deea92c61e49983",
-      "sourceName": "contracts/periphery/contracts/ArcFlowV25SwapRouter.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../../core/contracts/interfaces/IArcFlowV25Factory.sol",
-        "./libraries/TransferHelper.sol",
-        "./interfaces/IArcFlowV25SwapRouter.sol",
-        "./libraries/ArcFlowV25Library.sol",
-        "./libraries/SafeMath.sol",
-        "./interfaces/IERC20.sol",
-        "./interfaces/IWUSDC.sol"
-      ],
-      "versionPragmas": [
-        "=0.6.6"
-      ],
-      "artifacts": [
-        "ArcFlowV25SwapRouter"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/interfaces/IArcFlowV25SwapRouter.sol": {
-      "lastModificationDate": 1764086364491,
-      "contentHash": "1efe6274c4a12da2431dbbe28927a7dc",
-      "sourceName": "contracts/periphery/contracts/interfaces/IArcFlowV25SwapRouter.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.6.2"
-      ],
-      "artifacts": [
-        "IArcFlowV25SwapRouter"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/ArcFlowV25LiquidityRouter.sol": {
-      "lastModificationDate": 1764086761374,
-      "contentHash": "5ebd3689c07e19f566ae959331cfc71c",
-      "sourceName": "contracts/periphery/contracts/ArcFlowV25LiquidityRouter.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../../core/contracts/interfaces/IArcFlowV25Factory.sol",
-        "./libraries/TransferHelper.sol",
-        "./interfaces/IArcFlowV25LiquidityRouter.sol",
-        "./libraries/ArcFlowV25Library.sol",
-        "./libraries/SafeMath.sol",
-        "./interfaces/IERC20.sol",
-        "./interfaces/IWUSDC.sol"
-      ],
-      "versionPragmas": [
-        "=0.6.6"
-      ],
-      "artifacts": [
-        "ArcFlowV25LiquidityRouter"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/interfaces/IArcFlowV25LiquidityRouter.sol": {
-      "lastModificationDate": 1764086364491,
-      "contentHash": "3543d1597c5755284746b858d4af5166",
-      "sourceName": "contracts/periphery/contracts/interfaces/IArcFlowV25LiquidityRouter.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.6.2"
-      ],
-      "artifacts": [
-        "IArcFlowV25LiquidityRouter"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/core/contracts/interfaces/IERC20.sol": {
-      "lastModificationDate": 1764060706811,
-      "contentHash": "3d2b948a9266ee66b6e739de97c7e6e9",
-      "sourceName": "contracts/core/contracts/interfaces/IERC20.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IERC20"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/core/contracts/interfaces/IArcFlowV25ERC20.sol": {
-      "lastModificationDate": 1764060706811,
-      "contentHash": "039de93bcc62393047efb45c27170e09",
-      "sourceName": "contracts/core/contracts/interfaces/IArcFlowV25ERC20.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IArcFlowV25ERC20"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/interfaces/IArcFlowV25Migrator.sol": {
-      "lastModificationDate": 1764086364490,
-      "contentHash": "3265fe838b6daf772fadb04fc3c75093",
-      "sourceName": "contracts/periphery/contracts/interfaces/IArcFlowV25Migrator.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IArcFlowV25Migrator"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/interfaces/V1/IUniswapV1Exchange.sol": {
-      "lastModificationDate": 1764060706830,
-      "contentHash": "5ec7fe77a73b5ace5fc1fbae6b87f34e",
-      "sourceName": "contracts/periphery/contracts/interfaces/V1/IUniswapV1Exchange.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IUniswapV1Exchange"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/interfaces/V1/IUniswapV1Factory.sol": {
-      "lastModificationDate": 1764060706830,
-      "contentHash": "abe9343b20a93919250e0dba78bfd9c1",
-      "sourceName": "contracts/periphery/contracts/interfaces/V1/IUniswapV1Factory.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 999999
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "IUniswapV1Factory"
-      ]
-    },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/libraries/ArcFlowV25Library_old.sol": {
-      "lastModificationDate": 1764085840000,
+    "/workspaces/workspaces/contracts/periphery/contracts/libraries/ArcFlowV25Library_old.sol": {
+      "lastModificationDate": 1790438523370,
       "contentHash": "03771ecf385fcc5b60139d3e1de95216",
       "sourceName": "contracts/periphery/contracts/libraries/ArcFlowV25Library_old.sol",
       "solcConfig": {
@@ -1296,9 +778,51 @@
         "ArcFlowV25Library"
       ]
     },
-    "/home/ekomic/Desktop/arcflowv25-contracts/contracts/periphery/contracts/libraries/TransferHelper.sol": {
-      "lastModificationDate": 1764090163423,
-      "contentHash": "318255d20f8cd1a0d1b2b78ed628faa2",
+    "/workspaces/workspaces/contracts/periphery/contracts/UniswapV2Router02.sol": {
+      "lastModificationDate": 1790438649274,
+      "contentHash": "9538806ae13676bb26c926364b131b96",
+      "sourceName": "contracts/periphery/contracts/UniswapV2Router02.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../core/contracts/interfaces/IArcFlowV25Factory.sol",
+        "./libraries/TransferHelper.sol",
+        "./interfaces/IArcFlowV25Router02.sol",
+        "./libraries/ArcFlowV25Library.sol",
+        "./libraries/SafeMath.sol",
+        "./interfaces/IERC20.sol"
+      ],
+      "versionPragmas": [
+        "=0.6.6"
+      ],
+      "artifacts": [
+        "ArcFlowV25Router02"
+      ]
+    },
+    "/workspaces/workspaces/contracts/periphery/contracts/libraries/TransferHelper.sol": {
+      "lastModificationDate": 1790438592698,
+      "contentHash": "c8a30e9f074162385c97643565587b93",
       "sourceName": "contracts/periphery/contracts/libraries/TransferHelper.sol",
       "solcConfig": {
         "version": "0.6.6",
@@ -1329,6 +853,483 @@
       ],
       "artifacts": [
         "TransferHelper"
+      ]
+    },
+    "/workspaces/workspaces/contracts/periphery/contracts/interfaces/IArcFlowV25Router02.sol": {
+      "lastModificationDate": 1790438631310,
+      "contentHash": "20508ac2d54a62cf996cda17c9f45fcc",
+      "sourceName": "contracts/periphery/contracts/interfaces/IArcFlowV25Router02.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IArcFlowV25Router01.sol"
+      ],
+      "versionPragmas": [
+        ">=0.6.2"
+      ],
+      "artifacts": [
+        "IArcFlowV25Router02"
+      ]
+    },
+    "/workspaces/workspaces/contracts/periphery/contracts/interfaces/IERC20.sol": {
+      "lastModificationDate": 1790438523370,
+      "contentHash": "3d2b948a9266ee66b6e739de97c7e6e9",
+      "sourceName": "contracts/periphery/contracts/interfaces/IERC20.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
+    "/workspaces/workspaces/contracts/periphery/contracts/interfaces/IArcFlowV25Router01.sol": {
+      "lastModificationDate": 1790438631309,
+      "contentHash": "1812f55347928ace680c690597a2fec4",
+      "sourceName": "contracts/periphery/contracts/interfaces/IArcFlowV25Router01.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.6.2"
+      ],
+      "artifacts": [
+        "IArcFlowV25Router01"
+      ]
+    },
+    "/workspaces/workspaces/contracts/periphery/contracts/UniswapV2Router01.sol": {
+      "lastModificationDate": 1790438631310,
+      "contentHash": "78123980a8ca270770eb37f1af6428e6",
+      "sourceName": "contracts/periphery/contracts/UniswapV2Router01.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../core/contracts/interfaces/IArcFlowV25Factory.sol",
+        "./libraries/TransferHelper.sol",
+        "./libraries/ArcFlowV25Library.sol",
+        "./interfaces/IArcFlowV25Router01.sol",
+        "./interfaces/IERC20.sol"
+      ],
+      "versionPragmas": [
+        "=0.6.6"
+      ],
+      "artifacts": [
+        "ArcFlowV25Router01"
+      ]
+    },
+    "/workspaces/workspaces/contracts/periphery/contracts/ArcFlowV25SwapRouter.sol": {
+      "lastModificationDate": 1790438592698,
+      "contentHash": "418ecdd6184d00bbd38b50b58c94ef85",
+      "sourceName": "contracts/periphery/contracts/ArcFlowV25SwapRouter.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../core/contracts/interfaces/IArcFlowV25Factory.sol",
+        "./libraries/TransferHelper.sol",
+        "./interfaces/IArcFlowV25SwapRouter.sol",
+        "./libraries/ArcFlowV25Library.sol",
+        "./libraries/SafeMath.sol",
+        "./interfaces/IERC20.sol"
+      ],
+      "versionPragmas": [
+        "=0.6.6"
+      ],
+      "artifacts": [
+        "ArcFlowV25SwapRouter"
+      ]
+    },
+    "/workspaces/workspaces/contracts/periphery/contracts/interfaces/IArcFlowV25SwapRouter.sol": {
+      "lastModificationDate": 1790438592697,
+      "contentHash": "636bd7bdaf555f7bcf9cc4045b8af731",
+      "sourceName": "contracts/periphery/contracts/interfaces/IArcFlowV25SwapRouter.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.6.2"
+      ],
+      "artifacts": [
+        "IArcFlowV25SwapRouter"
+      ]
+    },
+    "/workspaces/workspaces/contracts/periphery/contracts/ArcFlowV25LiquidityRouter.sol": {
+      "lastModificationDate": 1790438592697,
+      "contentHash": "3de4a4431e6ff82a7d0ef0db0b0d8667",
+      "sourceName": "contracts/periphery/contracts/ArcFlowV25LiquidityRouter.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../core/contracts/interfaces/IArcFlowV25Factory.sol",
+        "./libraries/TransferHelper.sol",
+        "./interfaces/IArcFlowV25LiquidityRouter.sol",
+        "./libraries/ArcFlowV25Library.sol",
+        "./libraries/SafeMath.sol",
+        "./interfaces/IERC20.sol"
+      ],
+      "versionPragmas": [
+        "=0.6.6"
+      ],
+      "artifacts": [
+        "ArcFlowV25LiquidityRouter"
+      ]
+    },
+    "/workspaces/workspaces/contracts/periphery/contracts/interfaces/IArcFlowV25LiquidityRouter.sol": {
+      "lastModificationDate": 1790438592695,
+      "contentHash": "b9a98c1526a97e00d98b0a41afee7d81",
+      "sourceName": "contracts/periphery/contracts/interfaces/IArcFlowV25LiquidityRouter.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.6.2"
+      ],
+      "artifacts": [
+        "IArcFlowV25LiquidityRouter"
+      ]
+    },
+    "/workspaces/workspaces/contracts/core/contracts/interfaces/IERC20.sol": {
+      "lastModificationDate": 1790438523366,
+      "contentHash": "3d2b948a9266ee66b6e739de97c7e6e9",
+      "sourceName": "contracts/core/contracts/interfaces/IERC20.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
+    "/workspaces/workspaces/contracts/core/contracts/interfaces/IArcFlowV25ERC20.sol": {
+      "lastModificationDate": 1790438523366,
+      "contentHash": "039de93bcc62393047efb45c27170e09",
+      "sourceName": "contracts/core/contracts/interfaces/IArcFlowV25ERC20.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IArcFlowV25ERC20"
+      ]
+    },
+    "/workspaces/workspaces/contracts/periphery/contracts/interfaces/IArcFlowV25Migrator.sol": {
+      "lastModificationDate": 1790438523370,
+      "contentHash": "3265fe838b6daf772fadb04fc3c75093",
+      "sourceName": "contracts/periphery/contracts/interfaces/IArcFlowV25Migrator.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IArcFlowV25Migrator"
+      ]
+    },
+    "/workspaces/workspaces/contracts/periphery/contracts/interfaces/V1/IUniswapV1Exchange.sol": {
+      "lastModificationDate": 1790438523370,
+      "contentHash": "5ec7fe77a73b5ace5fc1fbae6b87f34e",
+      "sourceName": "contracts/periphery/contracts/interfaces/V1/IUniswapV1Exchange.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IUniswapV1Exchange"
+      ]
+    },
+    "/workspaces/workspaces/contracts/periphery/contracts/interfaces/V1/IUniswapV1Factory.sol": {
+      "lastModificationDate": 1790438523370,
+      "contentHash": "abe9343b20a93919250e0dba78bfd9c1",
+      "sourceName": "contracts/periphery/contracts/interfaces/V1/IUniswapV1Factory.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 999999
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IUniswapV1Factory"
       ]
     }
   }
