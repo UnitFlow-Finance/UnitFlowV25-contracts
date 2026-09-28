@@ -46,6 +46,19 @@ The `deploy:arcmainnet` command deploys and validates the factory, liquidity rou
 router in the same order as testnet. Keep `CONFIRM_ARC_MAINNET` unset during read-only work so an
 accidental invocation cannot submit deployment transactions.
 
+To set the factory protocol-fee recipient to the connected deployer, first verify that the same
+account is the factory's current `feeToSetter`, then run:
+
+```bash
+export MAINNET_PRIVATE_KEY=0x...
+export CONFIRM_ARC_MAINNET_FEE_TO=1
+npm run set-fee-to:arcmainnet
+```
+
+This command targets factory `0xFc1EC6761e246D5cb0c4C22669f8635098B22ba1`, refuses to run on
+any chain other than Arc mainnet, verifies the caller's authorization, and confirms `feeTo` after
+the transaction is mined.
+
 Latest verified `npm run deploy:arc` smoke deployment (2026-09-26):
 
 - Factory: `0xE5E8528dA254885451a5F0c26d506937A8F03151`
