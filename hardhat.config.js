@@ -43,6 +43,7 @@ module.exports = {
   etherscan: {
     apiKey: {
       arcTestnet: "no-api-key-needed",
+      arcMainnet: process.env.ARC_API_KEY
     },
     customChains: [
       {
@@ -51,6 +52,14 @@ module.exports = {
         urls: {
           apiURL: "https://testnet.arcscan.app/api",
           browserURL: "https://testnet.arcscan.app",
+        },
+      },
+      {
+        network: "arcMainnet",
+        chainId: 5042,
+        urls: {
+          apiURL: "https://api.blockscout.com/5042/api",
+          browserURL: "https://explorer.arc.io",
         },
       },
     ],
