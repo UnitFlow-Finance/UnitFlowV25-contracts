@@ -31,6 +31,18 @@ This deploys the factory first, passes its address and Arc USDC to both routers,
 bindings on-chain, and prints the three addresses, transaction hashes, explorer links, and frontend
 environment values together.
 
+To deploy both routers against an existing compatible factory, set its address and run:
+
+```bash
+export FACTORY_ADDRESS=0x...
+npm run deploy:routers:arc
+```
+
+The router-only script verifies that the factory and ERC-20 USDC contracts exist and expose the
+expected interfaces before deployment, then verifies both routers' immutable bindings.
+`USDC_ADDRESS` defaults to Arc's system USDC and may be overridden explicitly. Set
+`DEPLOY_CONFIRMATIONS` to an integer from 1 through 20 when more than one confirmation is required.
+
 ## Arc mainnet deployment
 
 Arc mainnet uses chain ID `5042`, RPC `https://rpc.mainnet.arc.io`, and the same USDC system
@@ -40,6 +52,14 @@ contract. Mainnet deliberately uses a separate key variable and an explicit safe
 export MAINNET_PRIVATE_KEY=0x...
 export CONFIRM_ARC_MAINNET=1
 npm run deploy:arcmainnet
+```
+
+For an existing mainnet factory, use the router-only command and its separate confirmation lock:
+
+```bash
+export FACTORY_ADDRESS=0x...
+export CONFIRM_ARC_MAINNET_ROUTER_DEPLOYMENT=1
+npm run deploy:routers:arcmainnet
 ```
 
 The `deploy:arcmainnet` command deploys and validates the factory, liquidity router, and swap
@@ -69,9 +89,12 @@ The script verifies chain ID `5042002`, deploys the factory and both routers, cr
 token, whitelists the liquidity router, adds USDC liquidity, executes taxed swaps in both directions,
 and removes liquidity while asserting that the whitelisted liquidity operations are not taxed.
 
-Tax tokens must exempt `UnitFlowV25LiquidityRouter` according to their own exemption mechanism.
-The swap router deliberately remains non-exempt so fee-on-transfer swap paths can measure actual
-pair inputs and recipient outputs.
+Tax tokens may exempt `UnitFlowV25LiquidityRouter` according to their own exemption mechanism and
+use the standard add-liquidity entry points. Non-exempt tokens must use
+`addLiquiditySupportingFeeOnTransferTokens` or `addLiquidityUSDCSupportingFeeOnTransferTokens`;
+those separate entry points return and enforce minimums against the amounts the pair actually
+receives. The swap router deliberately remains non-exempt so fee-on-transfer swap paths can measure
+actual pair inputs and recipient outputs.
 
 ## Active UnitFlow Arc testnet deployment
 

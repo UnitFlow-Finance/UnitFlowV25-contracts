@@ -1,5 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
+const { deployRouters } = require("../scripts/deploy-routers-existing-factory");
 
 describe("Arc ERC-20 USDC routers", function () {
   const MAX = ethers.MaxUint256;
@@ -41,6 +42,96 @@ describe("Arc ERC-20 USDC routers", function () {
     expect(await pair.balanceOf((await ethers.getSigners())[0].address)).to.be.gt(0);
     expect(await usdc.balanceOf(await pair.getAddress())).to.equal(USDC_LIQUIDITY);
     expect(await taxToken.balanceOf(await pair.getAddress())).to.equal(TAX_LIQUIDITY);
+  });
+
+  it("adds liquidity through the separate fee-on-transfer entry point and returns actual deposits", async function () {
+    const [owner, provider, collector] = await ethers.getSigners();
+    const USDC = await ethers.getContractFactory("USDC");
+    const usdc = await USDC.deploy(USDC_SUPPLY);
+    const TaxToken = await ethers.getContractFactory("TaxToken");
+    const taxToken = await TaxToken.deploy(TAX_SUPPLY, 1000, collector.address);
+    const Factory = await ethers.getContractFactory("UnitFlowV25Factory");
+    const factory = await Factory.deploy(owner.address);
+    const Router = await ethers.getContractFactory("UnitFlowV25LiquidityRouter");
+    const router = await Router.deploy(await factory.getAddress(), await usdc.getAddress());
+    const routerAddress = await router.getAddress();
+
+    await taxToken.transfer(provider.address, TAX_LIQUIDITY);
+    await usdc.transfer(provider.address, USDC_LIQUIDITY);
+    await taxToken.connect(provider).approve(routerAddress, TAX_LIQUIDITY);
+    await usdc.connect(provider).approve(routerAddress, USDC_LIQUIDITY);
+
+    const actualTaxDeposit = TAX_LIQUIDITY - TAX_LIQUIDITY / 10n;
+    const result = await router.connect(provider).addLiquidityUSDCSupportingFeeOnTransferTokens.staticCall(
+      await taxToken.getAddress(), TAX_LIQUIDITY, USDC_LIQUIDITY, actualTaxDeposit, USDC_LIQUIDITY,
+      provider.address, MAX
+    );
+    expect(result[0]).to.equal(actualTaxDeposit);
+    expect(result[1]).to.equal(USDC_LIQUIDITY);
+
+    await router.connect(provider).addLiquidityUSDCSupportingFeeOnTransferTokens(
+      await taxToken.getAddress(), TAX_LIQUIDITY, USDC_LIQUIDITY, actualTaxDeposit, USDC_LIQUIDITY,
+      provider.address, MAX
+    );
+
+    const pairAddress = await factory.getPair(await taxToken.getAddress(), await usdc.getAddress());
+    const pair = await ethers.getContractAt("UnitFlowV25Pair", pairAddress);
+    expect(await taxToken.balanceOf(pairAddress)).to.equal(actualTaxDeposit);
+    expect(await usdc.balanceOf(pairAddress)).to.equal(USDC_LIQUIDITY);
+    expect(await taxToken.balanceOf(collector.address)).to.equal(TAX_LIQUIDITY / 10n);
+    expect(await pair.balanceOf(provider.address)).to.be.gt(0);
+  });
+
+  it("enforces fee-on-transfer add-liquidity minimums against actual pair receipts", async function () {
+    const [owner, provider, collector] = await ethers.getSigners();
+    const USDC = await ethers.getContractFactory("USDC");
+    const usdc = await USDC.deploy(USDC_SUPPLY);
+    const TaxToken = await ethers.getContractFactory("TaxToken");
+    const taxToken = await TaxToken.deploy(TAX_SUPPLY, 1000, collector.address);
+    const Factory = await ethers.getContractFactory("UnitFlowV25Factory");
+    const factory = await Factory.deploy(owner.address);
+    const Router = await ethers.getContractFactory("UnitFlowV25LiquidityRouter");
+    const router = await Router.deploy(await factory.getAddress(), await usdc.getAddress());
+
+    await taxToken.transfer(provider.address, TAX_LIQUIDITY);
+    await usdc.transfer(provider.address, USDC_LIQUIDITY);
+    await taxToken.connect(provider).approve(await router.getAddress(), TAX_LIQUIDITY);
+    await usdc.connect(provider).approve(await router.getAddress(), USDC_LIQUIDITY);
+    await expect(router.connect(provider).addLiquidityUSDCSupportingFeeOnTransferTokens(
+      await taxToken.getAddress(), TAX_LIQUIDITY, USDC_LIQUIDITY, TAX_LIQUIDITY, USDC_LIQUIDITY,
+      provider.address, MAX
+    )).to.be.revertedWith("UnitFlowV25LiquidityRouter: INSUFFICIENT_TOKEN_AMOUNT");
+    expect(await factory.getPair(await taxToken.getAddress(), await usdc.getAddress())).to.equal(ethers.ZeroAddress);
+    expect(await taxToken.balanceOf(collector.address)).to.equal(0);
+  });
+
+  it("supports fee-on-transfer tokens on both sides of the generic liquidity function", async function () {
+    const [owner, provider, collector] = await ethers.getSigners();
+    const TaxToken = await ethers.getContractFactory("TaxToken");
+    const tokenA = await TaxToken.deploy(TAX_SUPPLY, 1000, collector.address);
+    const tokenB = await TaxToken.deploy(TAX_SUPPLY, 500, collector.address);
+    const Factory = await ethers.getContractFactory("UnitFlowV25Factory");
+    const factory = await Factory.deploy(owner.address);
+    const Router = await ethers.getContractFactory("UnitFlowV25LiquidityRouter");
+    const router = await Router.deploy(await factory.getAddress(), await tokenB.getAddress());
+    const amount = ethers.parseEther("10000");
+
+    await tokenA.transfer(provider.address, amount);
+    await tokenB.transfer(provider.address, amount);
+    await tokenA.connect(provider).approve(await router.getAddress(), amount);
+    await tokenB.connect(provider).approve(await router.getAddress(), amount);
+    await router.connect(provider).addLiquiditySupportingFeeOnTransferTokens(
+      await tokenA.getAddress(), await tokenB.getAddress(), amount, amount,
+      amount * 90n / 100n, amount * 95n / 100n, provider.address, MAX
+    );
+
+    const pairAddress = await factory.getPair(await tokenA.getAddress(), await tokenB.getAddress());
+    const pair = await ethers.getContractAt("UnitFlowV25Pair", pairAddress);
+    expect(await tokenA.balanceOf(pairAddress)).to.equal(amount * 90n / 100n);
+    expect(await tokenB.balanceOf(pairAddress)).to.equal(amount * 95n / 100n);
+    expect(await tokenA.balanceOf(collector.address)).to.equal(amount * 10n / 100n);
+    expect(await tokenB.balanceOf(collector.address)).to.equal(amount * 5n / 100n);
+    expect(await pair.balanceOf(provider.address)).to.be.gt(0);
   });
 
   it("supports taxed token input swaps and does not sweep stray router USDC", async function () {
@@ -116,11 +207,55 @@ describe("Arc ERC-20 USDC routers", function () {
     expect(await taxToken.balanceOf(collector.address)).to.equal(0);
   });
 
+  it("exposes ERC-20-only router APIs and rejects native-token transfers", async function () {
+    const { owner, liquidityRouter, swapRouter } = await deployFixture();
+    const liquidityFunctions = liquidityRouter.interface.fragments
+      .filter((fragment) => fragment.type === "function")
+      .map((fragment) => fragment.name);
+    const swapFunctions = swapRouter.interface.fragments
+      .filter((fragment) => fragment.type === "function")
+      .map((fragment) => fragment.name);
+
+    expect(liquidityFunctions.some((name) => name.includes("ETH") || name.includes("Native"))).to.equal(false);
+    expect(swapFunctions.some((name) => name.includes("ETH") || name.includes("Native"))).to.equal(false);
+    expect(liquidityRouter.interface.fragments.some(
+      (fragment) => fragment.type === "function" && fragment.stateMutability === "payable"
+    )).to.equal(false);
+    expect(swapRouter.interface.fragments.some(
+      (fragment) => fragment.type === "function" && fragment.stateMutability === "payable"
+    )).to.equal(false);
+
+    await expect(owner.sendTransaction({ to: await liquidityRouter.getAddress(), value: 1n })).to.be.reverted;
+    await expect(owner.sendTransaction({ to: await swapRouter.getAddress(), value: 1n })).to.be.reverted;
+  });
+
   it("rejects zero-address router dependencies", async function () {
     const [owner] = await ethers.getSigners();
     const Router = await ethers.getContractFactory("UnitFlowV25SwapRouter");
     await expect(Router.deploy(ethers.ZeroAddress, owner.address)).to.be.revertedWith(
       "UnitFlowV25SwapRouter: ZERO_ADDRESS"
     );
+  });
+
+  it("deploys and validates both routers against an existing factory", async function () {
+    const [owner] = await ethers.getSigners();
+    const USDC = await ethers.getContractFactory("USDC");
+    const usdc = await USDC.deploy(USDC_SUPPLY);
+    const Factory = await ethers.getContractFactory("UnitFlowV25Factory");
+    const factory = await Factory.deploy(owner.address);
+
+    const result = await deployRouters(
+      ethers,
+      await factory.getAddress(),
+      await usdc.getAddress(),
+    );
+    const liquidityRouter = await ethers.getContractAt(
+      "UnitFlowV25LiquidityRouter", result.liquidityRouter.address
+    );
+    const swapRouter = await ethers.getContractAt("UnitFlowV25SwapRouter", result.swapRouter.address);
+    expect(await liquidityRouter.factory()).to.equal(await factory.getAddress());
+    expect(await liquidityRouter.USDC()).to.equal(await usdc.getAddress());
+    expect(await swapRouter.factory()).to.equal(await factory.getAddress());
+    expect(await swapRouter.USDC()).to.equal(await usdc.getAddress());
   });
 });

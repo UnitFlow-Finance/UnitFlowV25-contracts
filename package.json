@@ -4,7 +4,9 @@
     "test": "hardhat test",
     "test:arc": "hardhat test test/arc-usdc-router.test.js",
     "deploy:arc": "hardhat run scripts/deploy-unitflow.js --network arcTestnet",
+    "deploy:routers:arc": "hardhat run scripts/deploy-routers-existing-factory.js --network arcTestnet",
     "deploy:arcmainnet": "hardhat run scripts/deploy-unitflow.js --network arcMainnet",
+    "deploy:routers:arcmainnet": "hardhat run scripts/deploy-routers-existing-factory.js --network arcMainnet",
     "set-fee-to:arcmainnet": "hardhat run scripts/set-fee-to-arcmainnet.js --network arcMainnet"
   },
   "dependencies": {
