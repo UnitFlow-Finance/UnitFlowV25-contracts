@@ -85,6 +85,27 @@ interface IUnitFlowV25LiquidityRouter {
         uint deadline,
         bool approveMax, uint8 v, bytes32 r, bytes32 s
     ) external returns (uint amountToken, uint amountUSDC);
+
+    function removeLiquiditySupportingFeeOnTransferTokens(
+        address tokenA,
+        address tokenB,
+        uint liquidity,
+        uint amountAMin,
+        uint amountBMin,
+        address to,
+        uint deadline
+    ) external returns (uint amountA, uint amountB);
+
+    function removeLiquidityWithPermitSupportingFeeOnTransferTokens(
+        address tokenA,
+        address tokenB,
+        uint liquidity,
+        uint amountAMin,
+        uint amountBMin,
+        address to,
+        uint deadline,
+        bool approveMax, uint8 v, bytes32 r, bytes32 s
+    ) external returns (uint amountA, uint amountB);
     
     function removeLiquidityUSDCSupportingFeeOnTransferTokens(
         address token,

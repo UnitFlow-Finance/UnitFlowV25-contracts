@@ -25,7 +25,9 @@ for an independent audit before handling material value.
 
 Fee-on-transfer tokens may apply asymmetric, dynamic, rebasing, reflection, sender-specific, or
 recipient-specific balance changes. The supporting liquidity functions enforce minimum actual
-receipts, but they cannot guarantee that two post-fee deposits preserve the pool's pre-existing
+receipts after routing assets through the liquidity router. Non-exempt tokens may charge once on
+the user/pair-to-router leg and again on the router-to-pair/user leg. The functions cannot guarantee
+that two post-fee deposits preserve the pool's pre-existing
 reserve ratio. The pair mints liquidity from the limiting side, so any excess on the other side
 benefits existing liquidity providers. Callers should calculate conservative post-fee minimums and
 review the token's transfer rules. Tokens with callbacks or non-standard balance behavior require

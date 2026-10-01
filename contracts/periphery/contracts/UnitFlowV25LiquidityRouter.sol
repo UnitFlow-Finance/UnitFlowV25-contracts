@@ -95,10 +95,39 @@ contract UnitFlowV25LiquidityRouter is IUnitFlowV25LiquidityRouter {
         liquidity = IUnitFlowV25Pair(pair).mint(to);
     }
 
-    // The standard add-liquidity functions return the requested transfer amounts. For a
-    // fee-on-transfer token that can overstate what the pair actually received. These
-    // entry points instead mediate both transfers and enforce minimums against pair balance
-    // deltas, so the returned amounts are the amounts that were really deposited.
+    function _transferThroughRouter(address token, address pair, uint requestedAmount)
+        internal
+        returns (uint pairAmount)
+    {
+        uint routerBalanceBefore = IERC20(token).balanceOf(address(this));
+        TransferHelper.safeTransferFrom(token, msg.sender, address(this), requestedAmount);
+        uint routerAmount = IERC20(token).balanceOf(address(this)).sub(routerBalanceBefore);
+
+        uint pairBalanceBefore = IERC20(token).balanceOf(pair);
+        TransferHelper.safeTransfer(token, pair, routerAmount);
+        pairAmount = IERC20(token).balanceOf(pair).sub(pairBalanceBefore);
+        require(
+            IERC20(token).balanceOf(address(this)) >= routerBalanceBefore,
+            'UnitFlowV25LiquidityRouter: ROUTER_BALANCE_DECREASED'
+        );
+    }
+
+    function _forwardRouterBalanceDelta(address token, address to, uint routerBalanceBefore)
+        internal
+        returns (uint recipientAmount)
+    {
+        uint routerAmount = IERC20(token).balanceOf(address(this)).sub(routerBalanceBefore);
+        uint recipientBalanceBefore = IERC20(token).balanceOf(to);
+        TransferHelper.safeTransfer(token, to, routerAmount);
+        recipientAmount = IERC20(token).balanceOf(to).sub(recipientBalanceBefore);
+        require(
+            IERC20(token).balanceOf(address(this)) >= routerBalanceBefore,
+            'UnitFlowV25LiquidityRouter: ROUTER_BALANCE_DECREASED'
+        );
+    }
+
+    // These entry points explicitly mediate both legs: sender -> router -> pair. Returned
+    // amounts and minimums refer to what the pair receives after both transfers.
     function addLiquiditySupportingFeeOnTransferTokens(
         address tokenA,
         address tokenB,
@@ -114,13 +143,8 @@ contract UnitFlowV25LiquidityRouter is IUnitFlowV25LiquidityRouter {
         );
         address pair = UnitFlowV25Library.pairFor(factory, tokenA, tokenB);
 
-        uint balanceBefore = IERC20(tokenA).balanceOf(pair);
-        TransferHelper.safeTransferFrom(tokenA, msg.sender, pair, amountA);
-        amountA = IERC20(tokenA).balanceOf(pair).sub(balanceBefore);
-
-        balanceBefore = IERC20(tokenB).balanceOf(pair);
-        TransferHelper.safeTransferFrom(tokenB, msg.sender, pair, amountB);
-        amountB = IERC20(tokenB).balanceOf(pair).sub(balanceBefore);
+        amountA = _transferThroughRouter(tokenA, pair, amountA);
+        amountB = _transferThroughRouter(tokenB, pair, amountB);
 
         require(amountA >= amountAMin, 'UnitFlowV25LiquidityRouter: INSUFFICIENT_A_AMOUNT');
         require(amountB >= amountBMin, 'UnitFlowV25LiquidityRouter: INSUFFICIENT_B_AMOUNT');
@@ -146,13 +170,8 @@ contract UnitFlowV25LiquidityRouter is IUnitFlowV25LiquidityRouter {
         );
         address pair = UnitFlowV25Library.pairFor(factory, token, USDC);
 
-        uint balanceBefore = IERC20(token).balanceOf(pair);
-        TransferHelper.safeTransferFrom(token, msg.sender, pair, amountToken);
-        amountToken = IERC20(token).balanceOf(pair).sub(balanceBefore);
-
-        balanceBefore = IERC20(USDC).balanceOf(pair);
-        TransferHelper.safeTransferFrom(USDC, msg.sender, pair, amountUSDC);
-        amountUSDC = IERC20(USDC).balanceOf(pair).sub(balanceBefore);
+        amountToken = _transferThroughRouter(token, pair, amountToken);
+        amountUSDC = _transferThroughRouter(USDC, pair, amountUSDC);
 
         require(amountToken >= amountTokenMin, 'UnitFlowV25LiquidityRouter: INSUFFICIENT_TOKEN_AMOUNT');
         require(amountUSDC >= amountUSDCMin, 'UnitFlowV25LiquidityRouter: INSUFFICIENT_USDC_AMOUNT');
@@ -230,6 +249,45 @@ contract UnitFlowV25LiquidityRouter is IUnitFlowV25LiquidityRouter {
         (amountToken, amountUSDC) = removeLiquidityUSDC(token, liquidity, amountTokenMin, amountUSDCMin, to, deadline);
     }
 
+    function removeLiquiditySupportingFeeOnTransferTokens(
+        address tokenA,
+        address tokenB,
+        uint liquidity,
+        uint amountAMin,
+        uint amountBMin,
+        address to,
+        uint deadline
+    ) public virtual override ensure(deadline) returns (uint amountA, uint amountB) {
+        require(to != address(this), 'UnitFlowV25LiquidityRouter: INVALID_TO');
+        uint routerBalanceABefore = IERC20(tokenA).balanceOf(address(this));
+        uint routerBalanceBBefore = IERC20(tokenB).balanceOf(address(this));
+        removeLiquidity(tokenA, tokenB, liquidity, 0, 0, address(this), deadline);
+
+        amountA = _forwardRouterBalanceDelta(tokenA, to, routerBalanceABefore);
+        amountB = _forwardRouterBalanceDelta(tokenB, to, routerBalanceBBefore);
+
+        require(amountA >= amountAMin, 'UnitFlowV25LiquidityRouter: INSUFFICIENT_A_AMOUNT');
+        require(amountB >= amountBMin, 'UnitFlowV25LiquidityRouter: INSUFFICIENT_B_AMOUNT');
+    }
+
+    function removeLiquidityWithPermitSupportingFeeOnTransferTokens(
+        address tokenA,
+        address tokenB,
+        uint liquidity,
+        uint amountAMin,
+        uint amountBMin,
+        address to,
+        uint deadline,
+        bool approveMax, uint8 v, bytes32 r, bytes32 s
+    ) external virtual override returns (uint amountA, uint amountB) {
+        address pair = UnitFlowV25Library.pairFor(factory, tokenA, tokenB);
+        uint value = approveMax ? uint(-1) : liquidity;
+        IUnitFlowV25Pair(pair).permit(msg.sender, address(this), value, deadline, v, r, s);
+        (amountA, amountB) = removeLiquiditySupportingFeeOnTransferTokens(
+            tokenA, tokenB, liquidity, amountAMin, amountBMin, to, deadline
+        );
+    }
+
     function removeLiquidityUSDCSupportingFeeOnTransferTokens(
         address token,
         uint liquidity,
@@ -238,24 +296,15 @@ contract UnitFlowV25LiquidityRouter is IUnitFlowV25LiquidityRouter {
         address to,
         uint deadline
     ) public virtual override ensure(deadline) returns (uint amountUSDC) {
-        uint tokenBalanceBefore = IERC20(token).balanceOf(address(this));
-        (, amountUSDC) = removeLiquidity(
+        (, amountUSDC) = removeLiquiditySupportingFeeOnTransferTokens(
             token,
             USDC,
             liquidity,
-            0,
+            amountTokenMin,
             amountUSDCMin,
-            address(this),
+            to,
             deadline
         );
-        uint tokenAmount = IERC20(token).balanceOf(address(this)).sub(tokenBalanceBefore);
-        uint recipientBalanceBefore = IERC20(token).balanceOf(to);
-        TransferHelper.safeTransfer(token, to, tokenAmount);
-        require(
-            IERC20(token).balanceOf(to).sub(recipientBalanceBefore) >= amountTokenMin,
-            'UnitFlowV25LiquidityRouter: INSUFFICIENT_TOKEN_AMOUNT'
-        );
-        TransferHelper.safeTransfer(USDC, to, amountUSDC);
     }
 
     function removeLiquidityUSDCWithPermitSupportingFeeOnTransferTokens(

@@ -44,7 +44,7 @@ describe("Arc ERC-20 USDC routers", function () {
     expect(await taxToken.balanceOf(await pair.getAddress())).to.equal(TAX_LIQUIDITY);
   });
 
-  it("adds liquidity through the separate fee-on-transfer entry point and returns actual deposits", async function () {
+  it("mediates fee-on-transfer liquidity through the router in both directions", async function () {
     const [owner, provider, collector] = await ethers.getSigners();
     const USDC = await ethers.getContractFactory("USDC");
     const usdc = await USDC.deploy(USDC_SUPPLY);
@@ -61,7 +61,13 @@ describe("Arc ERC-20 USDC routers", function () {
     await taxToken.connect(provider).approve(routerAddress, TAX_LIQUIDITY);
     await usdc.connect(provider).approve(routerAddress, USDC_LIQUIDITY);
 
-    const actualTaxDeposit = TAX_LIQUIDITY - TAX_LIQUIDITY / 10n;
+    const strayTax = ethers.parseEther("100");
+    const strayUSDC = ethers.parseUnits("7", 6);
+    await taxToken.transfer(routerAddress, strayTax);
+    await usdc.transfer(routerAddress, strayUSDC);
+
+    const afterFirstFee = TAX_LIQUIDITY - TAX_LIQUIDITY / 10n;
+    const actualTaxDeposit = afterFirstFee - afterFirstFee / 10n;
     const result = await router.connect(provider).addLiquidityUSDCSupportingFeeOnTransferTokens.staticCall(
       await taxToken.getAddress(), TAX_LIQUIDITY, USDC_LIQUIDITY, actualTaxDeposit, USDC_LIQUIDITY,
       provider.address, MAX
@@ -69,17 +75,52 @@ describe("Arc ERC-20 USDC routers", function () {
     expect(result[0]).to.equal(actualTaxDeposit);
     expect(result[1]).to.equal(USDC_LIQUIDITY);
 
-    await router.connect(provider).addLiquidityUSDCSupportingFeeOnTransferTokens(
+    const addTransaction = await router.connect(provider).addLiquidityUSDCSupportingFeeOnTransferTokens(
       await taxToken.getAddress(), TAX_LIQUIDITY, USDC_LIQUIDITY, actualTaxDeposit, USDC_LIQUIDITY,
       provider.address, MAX
     );
+    const addReceipt = await addTransaction.wait();
 
     const pairAddress = await factory.getPair(await taxToken.getAddress(), await usdc.getAddress());
     const pair = await ethers.getContractAt("UnitFlowV25Pair", pairAddress);
+    const taxTokenAddress = await taxToken.getAddress();
+    const addTransfers = addReceipt.logs
+      .filter((log) => log.address === taxTokenAddress)
+      .map((log) => taxToken.interface.parseLog(log))
+      .filter((log) => log && log.name === "Transfer");
+    expect(addTransfers.some((log) =>
+      log.args.from === provider.address && log.args.to === routerAddress && log.args.value === afterFirstFee
+    )).to.equal(true);
+    expect(addTransfers.some((log) =>
+      log.args.from === routerAddress && log.args.to === pairAddress && log.args.value === actualTaxDeposit
+    )).to.equal(true);
     expect(await taxToken.balanceOf(pairAddress)).to.equal(actualTaxDeposit);
     expect(await usdc.balanceOf(pairAddress)).to.equal(USDC_LIQUIDITY);
-    expect(await taxToken.balanceOf(collector.address)).to.equal(TAX_LIQUIDITY / 10n);
-    expect(await pair.balanceOf(provider.address)).to.be.gt(0);
+    expect(await taxToken.balanceOf(collector.address)).to.equal(TAX_LIQUIDITY - actualTaxDeposit);
+    expect(await taxToken.balanceOf(routerAddress)).to.equal(strayTax);
+    expect(await usdc.balanceOf(routerAddress)).to.equal(strayUSDC);
+
+    const liquidity = await pair.balanceOf(provider.address);
+    expect(liquidity).to.be.gt(0);
+    await pair.connect(provider).approve(routerAddress, liquidity);
+    const providerTaxBefore = await taxToken.balanceOf(provider.address);
+    const providerUSDCBefore = await usdc.balanceOf(provider.address);
+    const removeTransaction = await router.connect(provider).removeLiquiditySupportingFeeOnTransferTokens(
+      await taxToken.getAddress(), await usdc.getAddress(), liquidity, 1, 1, provider.address, MAX
+    );
+    const removeReceipt = await removeTransaction.wait();
+    const removeTransfers = removeReceipt.logs
+      .filter((log) => log.address === taxTokenAddress)
+      .map((log) => taxToken.interface.parseLog(log))
+      .filter((log) => log && log.name === "Transfer");
+    expect(removeTransfers.some((log) => log.args.from === pairAddress && log.args.to === routerAddress)).to.equal(true);
+    expect(removeTransfers.some((log) =>
+      log.args.from === routerAddress && log.args.to === provider.address
+    )).to.equal(true);
+    expect(await taxToken.balanceOf(provider.address)).to.be.gt(providerTaxBefore);
+    expect(await usdc.balanceOf(provider.address)).to.be.gt(providerUSDCBefore);
+    expect(await taxToken.balanceOf(routerAddress)).to.equal(strayTax);
+    expect(await usdc.balanceOf(routerAddress)).to.equal(strayUSDC);
   });
 
   it("enforces fee-on-transfer add-liquidity minimums against actual pair receipts", async function () {
@@ -120,17 +161,19 @@ describe("Arc ERC-20 USDC routers", function () {
     await tokenB.transfer(provider.address, amount);
     await tokenA.connect(provider).approve(await router.getAddress(), amount);
     await tokenB.connect(provider).approve(await router.getAddress(), amount);
+    const actualA = amount * 81n / 100n;
+    const actualB = amount * 9025n / 10000n;
     await router.connect(provider).addLiquiditySupportingFeeOnTransferTokens(
       await tokenA.getAddress(), await tokenB.getAddress(), amount, amount,
-      amount * 90n / 100n, amount * 95n / 100n, provider.address, MAX
+      actualA, actualB, provider.address, MAX
     );
 
     const pairAddress = await factory.getPair(await tokenA.getAddress(), await tokenB.getAddress());
     const pair = await ethers.getContractAt("UnitFlowV25Pair", pairAddress);
-    expect(await tokenA.balanceOf(pairAddress)).to.equal(amount * 90n / 100n);
-    expect(await tokenB.balanceOf(pairAddress)).to.equal(amount * 95n / 100n);
-    expect(await tokenA.balanceOf(collector.address)).to.equal(amount * 10n / 100n);
-    expect(await tokenB.balanceOf(collector.address)).to.equal(amount * 5n / 100n);
+    expect(await tokenA.balanceOf(pairAddress)).to.equal(actualA);
+    expect(await tokenB.balanceOf(pairAddress)).to.equal(actualB);
+    expect(await tokenA.balanceOf(collector.address)).to.equal(amount - actualA);
+    expect(await tokenB.balanceOf(collector.address)).to.equal(amount - actualB);
     expect(await pair.balanceOf(provider.address)).to.be.gt(0);
   });
 

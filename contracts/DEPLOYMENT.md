@@ -92,11 +92,17 @@ and removes liquidity while asserting that the whitelisted liquidity operations 
 Tax tokens may exempt `UnitFlowV25LiquidityRouter` according to their own exemption mechanism and
 use the standard add-liquidity entry points. Non-exempt tokens must use
 `addLiquiditySupportingFeeOnTransferTokens` or `addLiquidityUSDCSupportingFeeOnTransferTokens`;
-those separate entry points return and enforce minimums against the amounts the pair actually
-receives. The swap router deliberately remains non-exempt so fee-on-transfer swap paths can measure
-actual pair inputs and recipient outputs.
+those separate entry points route assets from the user to the liquidity router and then to the pair,
+returning and enforcing minimums against the amounts the pair receives after both transfers.
+Supporting removals use the reverse pair-to-router-to-user path and enforce minimums against final
+recipient balances. A non-exempt token can therefore charge its transfer fee twice in either
+direction. The swap router deliberately remains non-exempt so fee-on-transfer swap paths can
+measure actual pair inputs and recipient outputs.
 
 ## Active UnitFlow Arc testnet deployment
+
+The addresses below predate the router-mediated fee-on-transfer custody change. Deploy new router
+bytecode before relying on the user-to-router-to-pair and pair-to-router-to-user behavior.
 
 Deployed and integration-tested on 2026-09-26:
 
